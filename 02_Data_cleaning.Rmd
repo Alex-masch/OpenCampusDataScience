@@ -1,0 +1,12 @@
+---
+title: "Data_cleaning"
+output: html_document
+---
+
+## R Markdown
+
+#Delete all rows with n/a in Wettercode
+
+```{r cars}
+wetter %>% drop_na(Wettercode)
+```
