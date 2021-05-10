@@ -8,5 +8,5 @@ output: html_document
 #Delete all rows with n/a in Wettercode
 
 ```{r cars}
-wetter %>% drop_na(Wettercode)
+umsatzWetter <- umsatzWetter %>% drop_na(Wettercode)
 ```
