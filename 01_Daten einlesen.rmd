@@ -1,0 +1,64 @@
+---
+title: "Vorbereitung - Daten einlesen und explorieren"
+output: html_document
+---
+
+```{r Setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE) #Der Code in den Chunks soll im Output stehen
+```
+
+
+```{r benötigte Pakete laden}
+
+# Einbinden benötigter Bibliotheken und Funktionen
+library(tidyverse) #Daten manipulieren (lädt eine Reihe andere Pakete, z.B. readr, dplyr, ggplot2) 
+
+
+library(psych) #Statistische Methoden
+
+library(lubridate) #Umgang mit Kalender-Daten
+
+#die folgenden Pakete sind beim Daten explorieren sehr hilfreich... und vermutlich nicht vorinstalliert bei Euch
+
+library(skimr)
+#library(DataExplorer)
+
+```
+
+
+Daten werden im Hintergrund hier eingelesen.
+
+```{r Daten einlesen, include=FALSE}
+#die include=FALSE Option blendet den Chunk und seine Meldungen aus. Wenn Ihr genauer sehn wollt, was da passiert: Auf TRUE setzen
+
+# Einlesen der Umsatzdaten
+
+umsatzdaten <- read_csv("Daten/umsatzdaten_gekuerzt.csv")
+
+# Erstellung der Variable mit dem Wochentag
+umsatzdaten$Wochentag <- weekdays(umsatzdaten$Datum)
+
+kiwo <- read_csv("Daten/kiwo.csv")
+
+
+wetter <- read_csv("Daten/wetter.csv")
+
+
+
+```
+
+```{r Charakteristika der Datensätze anzeigen lassen}
+
+#Anzeigen, welche Variablen in den Datensätzen sind (ohne weitere Information , nur Name) 
+names(umsatzdaten) 
+names(kiwo) 
+names(wetter) 
+
+
+#Mehr Informationen zu den Datensätzen anzeigen
+skim(umsatzdaten)
+skim(kiwo)
+skim(wetter)
+
+```
+
