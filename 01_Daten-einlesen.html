@@ -611,6 +611,14 @@ skim(umsatzdaten)</code></pre>
 </tr>
 </tbody>
 </table>
+<p>Joinen von Daten</p>
+<pre class="r"><code>names(umsatzdaten)</code></pre>
+<pre><code>## [1] &quot;Datum&quot;       &quot;Warengruppe&quot; &quot;Umsatz&quot;      &quot;Wochentag&quot;</code></pre>
+<pre class="r"><code>names(kiwo)</code></pre>
+<pre><code>## [1] &quot;Datum&quot;       &quot;KielerWoche&quot;</code></pre>
+<pre class="r"><code>umsatzdaten_kiwo&lt;-left_join(umsatzdaten,kiwo, by=&quot;Datum&quot;)
+names(umsatzdaten_kiwo)</code></pre>
+<pre><code>## [1] &quot;Datum&quot;       &quot;Warengruppe&quot; &quot;Umsatz&quot;      &quot;Wochentag&quot;   &quot;KielerWoche&quot;</code></pre>
 
 
 

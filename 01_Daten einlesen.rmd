@@ -62,3 +62,15 @@ skim(wetter)
 
 ```
 
+
+Joinen von Daten
+
+```{r Joine kiwo-daten an Umsatzdaten}
+
+names(umsatzdaten)
+names(kiwo)
+umsatzdaten_kiwo<-left_join(umsatzdaten,kiwo, by="Datum")
+names(umsatzdaten_kiwo)
+```
+
+
