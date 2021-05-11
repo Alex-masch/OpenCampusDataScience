@@ -3,10 +3,6 @@ title: "Model"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 
 ```{r }
 #Multiple linear regression Umsatz and Temperatur, Bewölkung, Windgeschwindigkeit
