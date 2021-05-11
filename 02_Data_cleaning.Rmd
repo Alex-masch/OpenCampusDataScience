@@ -10,3 +10,5 @@ output: html_document
 ```{r cars}
 umsatzWetter <- umsatzWetter %>% drop_na(Wettercode)
 ```
+
+
