@@ -62,6 +62,7 @@ skim(wetter)
 
 ```
 
+<<<<<<< HEAD
 ```{r}
 #führt Umsatzdaten und Kieler Woche zusammen. Wo keine Werte für kiwo, werden N/A s erzeugt
 daten_umsatzdaten_kiwo <- left_join(umsatzdaten, kiwo)
@@ -75,3 +76,17 @@ daten_kiwo_wetter <- left_join(kiwo, wetter)
 daten_umsatzdaten_kiwo_wetter <- left_join(daten_umsatzdaten_kiwo, daten_kiwo_wetter)
 ```
 
+=======
+
+Joinen von Daten
+
+```{r Joine kiwo-daten an Umsatzdaten}
+
+names(umsatzdaten)
+names(kiwo)
+umsatzdaten_kiwo<-left_join(umsatzdaten,kiwo, by="Datum")
+names(umsatzdaten_kiwo)
+```
+
+
+>>>>>>> 3ecac330827a418d93e57afece716347ebb860be
