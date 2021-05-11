@@ -1,0 +1,42 @@
+---
+title: "Model"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r }
+#Multiple linear regression Umsatz and Temperatur, Bewölkung, Windgeschwindigkeit
+umsatz <- umsatzWetter[["Umsatz"]]
+temperatur <- umsatzWetter[["Temperatur"]]
+bewoelkung <- umsatzWetter[["Bewoelkung"]]
+windgeschwindigkeit <- umsatzWetter[["Windgeschwindigkeit"]]
+model <- lm(umsatz ~ temperatur+bewoelkung+windgeschwindigkeit)
+summary(model)
+```
+
+
+Alternative von Anke
+
+```{r Zwei Modelle, stepwise Regression, nutzt Modell-Syntax,}
+data<-read_csv(file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
+#Multiple linear regression Umsatz vorhergesagt durch Temperatur und Bewölkung
+#definiere Model
+M1<-Umsatz ~ Temperatur+Bewoelkung
+#führe Regression durch
+model_M1 <- lm(M1,data)
+summary(model_M1)
+# Interpretation: Bewölkung hat keine Vorhersagewert über Temperatur hinaus
+
+#Aufnahme von Windgeschwindigkeit als zusätzlichen Prädiktor
+M2<-update(M1,.~.+Windgeschwindigkeit)
+model_M2 <- lm(M2,data)
+summary(model_M2)
+
+#Modellvergleich
+anova(model_M1,model_M2)
+#Interpretation: Aufnahme von Windgeschwindigkeit erhöht auch nicht die Modellpassung
+```

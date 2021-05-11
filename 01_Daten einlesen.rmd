@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE) #Der Code in den Chunks soll im Output stehen
 ```
 
 
-```{r benötigte Pakete laden}
+```{r benötigte Pakete laden, include=FALSE}
 
 # Einbinden benötigter Bibliotheken und Funktionen
 library(tidyverse) #Daten manipulieren (lädt eine Reihe andere Pakete, z.B. readr, dplyr, ggplot2) 
@@ -33,15 +33,15 @@ Daten werden im Hintergrund hier eingelesen.
 
 # Einlesen der Umsatzdaten
 
-umsatzdaten <- read_csv("Daten/umsatzdaten_gekuerzt.csv")
+umsatzdaten <- read_csv(file.path('Daten','umsatzdaten_gekuerzt.csv',fsep = .Platform$file.sep))
 
 # Erstellung der Variable mit dem Wochentag
 umsatzdaten$Wochentag <- weekdays(umsatzdaten$Datum)
 
-kiwo <- read_csv("Daten/kiwo.csv")
+kiwo <- read_csv(file.path('Daten','kiwo.csv',fsep = .Platform$file.sep))
 
 
-wetter <- read_csv("Daten/wetter.csv")
+wetter <- read_csv(file.path('Daten','kiwo.csv',fsep = .Platform$file.sep))
 
 
 
@@ -80,12 +80,15 @@ daten_umsatzdaten_kiwo_wetter <- left_join(daten_umsatzdaten_kiwo, daten_kiwo_we
 
 Joinen von Daten
 
-```{r Joine kiwo-daten an Umsatzdaten}
+```{r Joine kiwo-daten an Umsatzdaten und Wetter-Daten an Umsatzdaten}
 
-names(umsatzdaten)
-names(kiwo)
+
 umsatzdaten_kiwo<-left_join(umsatzdaten,kiwo, by="Datum")
 names(umsatzdaten_kiwo)
+umsatzdaten_kiwo_wetter<-left_join(umsatzdaten,wetter, by="Datum")
+names(umsatzdaten_kiwo_wetter)
+write.csv(umsatzdaten_kiwo_wetter,file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
+
 ```
 
 
