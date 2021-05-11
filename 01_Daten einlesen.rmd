@@ -8,14 +8,18 @@ knitr::opts_chunk$set(echo = TRUE) #Der Code in den Chunks soll im Output stehen
 ```
 
 
-```{r benötigte Pakete laden}
+```{r benötigte Pakete laden, include=FALSE}
 
 # Einbinden benötigter Bibliotheken und Funktionen
 library(tidyverse) #Daten manipulieren (lädt eine Reihe andere Pakete, z.B. readr, dplyr, ggplot2) 
+
+
 library(psych) #Statistische Methoden
+
 library(lubridate) #Umgang mit Kalender-Daten
 
 #die folgenden Pakete sind beim Daten explorieren sehr hilfreich... und vermutlich nicht vorinstalliert bei Euch
+
 library(skimr)
 #library(DataExplorer)
 
@@ -28,15 +32,18 @@ Daten werden im Hintergrund hier eingelesen.
 #die include=FALSE Option blendet den Chunk und seine Meldungen aus. Wenn Ihr genauer sehn wollt, was da passiert: Auf TRUE setzen
 
 # Einlesen der Umsatzdaten
+
 umsatzdaten <- read_csv("Daten/umsatzdaten_gekuerzt.csv")
+
 # Erstellung der Variable mit dem Wochentag
 umsatzdaten$Wochentag <- weekdays(umsatzdaten$Datum)
 
 kiwo <- read_csv("Daten/kiwo.csv")
+
+
 wetter <- read_csv("Daten/wetter.csv")
 
-# Left outer join umsatzdaten & wetter. Join umsatzdaten and wetter but keep umsatzdaten only (NUN)
-umsatzWetter <- merge(x = umsatzdaten, y = wetter, by="Datum", all.umsatzdaten = TRUE)
+
 
 ```
 
@@ -65,6 +72,8 @@ umsatzdaten_kiwo<-left_join(umsatzdaten,kiwo, by="Datum")
 names(umsatzdaten_kiwo)
 umsatzdaten_kiwo_wetter<-left_join(umsatzdaten,wetter, by="Datum")
 names(umsatzdaten_kiwo_wetter)
+write.csv2(umsatzdaten_kiwo_wetter,file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
+
 ```
 
 
