@@ -21,19 +21,21 @@ summary(model)
 
 Alternative von Anke
 
-```{r Zwei Modelle, stepwise Regression, nutzt Modell-Syntax}
+```{r Zwei Modelle, stepwise Regression, nutzt Modell-Syntax,}
 data<-read_csv(file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
+#Multiple linear regression Umsatz and Temperatur, Bewölkung
 #definiere Model
 M1<-Umsatz ~ Temperatur+Bewoelkung
-
-#Multiple linear regression Umsatz and Temperatur, Bewölkung, Windgeschwindigkeit
-
+#führe Regression durch
 model_M1 <- lm(M1,data)
 summary(model_M1)
 
+#Aufnahme von Windgeschwindigkeit
 M2<-update(M1,.~.+Windgeschwindigkeit)
 model_M2 <- lm(M2,data)
 summary(model_M2)
 
+#Modellvergleich
 anova(model_M1,model_M2)
+#Interpretation: Aufnahme von Windgeschwindigkeit erhöht nicht die Modellpassung
 ```
