@@ -228,11 +228,11 @@ skim(umsatzdaten)</code></pre>
 <td align="left"></td>
 </tr>
 <tr class="even">
-<td align="left">character</td>
+<td align="left">Date</td>
 <td align="left">1</td>
 </tr>
 <tr class="odd">
-<td align="left">Date</td>
+<td align="left">factor</td>
 <td align="left">1</td>
 </tr>
 <tr class="even">
@@ -246,33 +246,6 @@ skim(umsatzdaten)</code></pre>
 <tr class="even">
 <td align="left">Group variables</td>
 <td align="left">None</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Variable type: character</strong></p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">skim_variable</th>
-<th align="right">n_missing</th>
-<th align="right">complete_rate</th>
-<th align="right">min</th>
-<th align="right">max</th>
-<th align="right">empty</th>
-<th align="right">n_unique</th>
-<th align="right">whitespace</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Wochentag</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">6</td>
-<td align="right">10</td>
-<td align="right">0</td>
-<td align="right">7</td>
-<td align="right">0</td>
 </tr>
 </tbody>
 </table>
@@ -298,6 +271,29 @@ skim(umsatzdaten)</code></pre>
 <td align="left">2019-06-06</td>
 <td align="left">2016-06-17</td>
 <td align="right">2121</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: factor</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="left">ordered</th>
+<th align="right">n_unique</th>
+<th align="left">top_counts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Wochentag</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">7</td>
+<td align="left">Son: 1570, Die: 1568, Sam: 1564, Mon: 1562</td>
 </tr>
 </tbody>
 </table>
@@ -597,9 +593,7 @@ names(umsatzdaten_kiwo_wetter)</code></pre>
 ## [7] &quot;Temperatur&quot;          &quot;Windgeschwindigkeit&quot; &quot;Wettercode&quot;</code></pre>
 <pre class="r"><code>write.csv(umsatzdaten_kiwo_wetter,file.path(&#39;Daten&#39;,&#39;umsatzdaten_kiwo_wetter.csv&#39;,fsep = .Platform$file.sep))</code></pre>
 <p>Hier wird 02_Data_cleaning.rmd eingebunden</p>
-<div id="r-markdown" class="section level2">
-<h2>R Markdown</h2>
-<p>#Delete all rows with n/a in Wettercode</p>
+<p>Delete all rows with n/a in Wettercode</p>
 <pre class="r"><code>umsatzWetter &lt;- left_join(umsatzdaten,wetter, by=&quot;Datum&quot;)
 umsatzWetter &lt;- umsatzWetter %&gt;% drop_na(Wettercode)</code></pre>
 <p>Hier wird 03_Model.rmd eingebunden</p>
@@ -631,23 +625,9 @@ summary(model)</code></pre>
 ## Multiple R-squared:  0.0486, Adjusted R-squared:  0.04825 
 ## F-statistic: 141.2 on 3 and 8293 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>Alternative von Anke</p>
-<pre class="r"><code>data&lt;-read_csv(file.path(&#39;Daten&#39;,&#39;umsatzdaten_kiwo_wetter.csv&#39;,fsep = .Platform$file.sep))</code></pre>
-<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
-<pre><code>## 
-## ── Column specification ────────────────────────────────────────────────────────
-## cols(
-##   X1 = col_double(),
-##   Datum = col_date(format = &quot;&quot;),
-##   Warengruppe = col_double(),
-##   Umsatz = col_double(),
-##   Wochentag = col_character(),
-##   KielerWoche = col_double(),
-##   Bewoelkung = col_double(),
-##   Temperatur = col_double(),
-##   Windgeschwindigkeit = col_double(),
-##   Wettercode = col_double()
-## )</code></pre>
-<pre class="r"><code>#Multiple linear regression Umsatz vorhergesagt durch Temperatur und Bewölkung
+<pre class="r"><code>#data&lt;-read_csv(file.path(&#39;Daten&#39;,&#39;umsatzdaten_kiwo_wetter.csv&#39;,fsep = .Platform$file.sep))
+data&lt;-umsatzdaten_kiwo_wetter
+#Multiple linear regression Umsatz vorhergesagt durch Temperatur und Bewölkung
 #definiere Model
 M1&lt;-Umsatz ~ Temperatur+Bewoelkung
 #führe Regression durch
@@ -673,7 +653,7 @@ summary(model_M1)</code></pre>
 ##   (135 observations deleted due to missingness)
 ## Multiple R-squared:  0.04865,    Adjusted R-squared:  0.04847 
 ## F-statistic: 275.2 on 2 and 10761 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code># Interpretation: Bewölkung hat keine Vorhersagewert über Temperatur hinaus
+<pre class="r"><code># Interpretation: Bewölkung hat keine Vorhersagewert für Umsatz über Temperatur hinaus
 
 #Aufnahme von Windgeschwindigkeit als zusätzlichen Prädiktor
 M2&lt;-update(M1,.~.+Windgeschwindigkeit)
@@ -700,17 +680,56 @@ summary(model_M2)</code></pre>
 ##   (135 observations deleted due to missingness)
 ## Multiple R-squared:  0.04888,    Adjusted R-squared:  0.04862 
 ## F-statistic: 184.3 on 3 and 10760 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>#Modellvergleich
-anova(model_M1,model_M2)</code></pre>
+<pre class="r"><code>#Aufnahme von Wochentag als zusätzlichen Prädiktor
+#Dummy-Variablen, Montag ist Referenz (=0)
+M3&lt;-update(M1,.~.+Windgeschwindigkeit+Wochentag)
+model_M3 &lt;- lm(M3,data)
+summary(model_M3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = M3, data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -266.70  -95.75  -39.09   82.04 1720.58 
+## 
+## Coefficients:
+##                     Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         131.4326     6.3979  20.543   &lt;2e-16 ***
+## Temperatur            4.3679     0.2003  21.807   &lt;2e-16 ***
+## Bewoelkung           -0.4150     0.5426  -0.765   0.4443    
+## Windgeschwindigkeit   0.5811     0.3204   1.813   0.0698 .  
+## WochentagDienstag     6.2836     4.9384   1.272   0.2033    
+## WochentagMittwoch     8.5981     4.9526   1.736   0.0826 .  
+## WochentagDonnerstag  -0.7545     4.9546  -0.152   0.8790    
+## WochentagFreitag      6.5520     4.9494   1.324   0.1856    
+## WochentagSamstag     54.7845     4.9458  11.077   &lt;2e-16 ***
+## WochentagSonntag     59.0220     4.9463  11.933   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 137.4 on 10754 degrees of freedom
+##   (135 observations deleted due to missingness)
+## Multiple R-squared:  0.07724,    Adjusted R-squared:  0.07647 
+## F-statistic:   100 on 9 and 10754 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>#Interpretation: samstags und sonntags wird im Vergleich zu montags sig. mehr Umsatz erzielt, anderen Tage unterscheiden sich auf 5% Niveau nicht von montags (Mittwoch etwas mehr, aber nur auf 10% sig, freitags einziger Wochentag, an dem noch weniger als montags verkauft wird)
+
+
+
+#Modellvergleich
+anova(model_M1,model_M2,model_M3)</code></pre>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Model 1: Umsatz ~ Temperatur + Bewoelkung
 ## Model 2: Umsatz ~ Temperatur + Bewoelkung + Windgeschwindigkeit
-##   Res.Df       RSS Df Sum of Sq      F Pr(&gt;F)
-## 1  10761 209345155                           
-## 2  10760 209294638  1     50517 2.5971 0.1071</code></pre>
-<pre class="r"><code>#Interpretation: Aufnahme von Windgeschwindigkeit erhöht auch nicht die Modellpassung</code></pre>
-</div>
+## Model 3: Umsatz ~ Temperatur + Bewoelkung + Windgeschwindigkeit + Wochentag
+##   Res.Df       RSS Df Sum of Sq       F Pr(&gt;F)    
+## 1  10761 209345155                                
+## 2  10760 209294638  1     50517  2.6754 0.1019    
+## 3  10754 203054707  6   6239931 55.0789 &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#Interpretation: Aufnahme von Windgeschwindigkeit erhöht nicht die Modellpassung, Aufnahme von Wochentags-Dummies wohl</code></pre>
 
 
 
