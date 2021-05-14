@@ -10,23 +10,13 @@ Daten werden im Hintergrund hier eingelesen.
 #die include=FALSE Option blendet den Chunk und seine Meldungen aus. Wenn Ihr genauer sehn wollt, was da passiert: Auf TRUE setzen
 
 # Einlesen der Umsatzdaten
-
 umsatzdaten <- read_csv(file.path('Daten','umsatzdaten_gekuerzt.csv',fsep = .Platform$file.sep))
-
 # Erstellung der Variable mit dem Wochentag
 ordentlicheWoche <- c('Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag')
 umsatzdaten$Wochentag <- as.factor(weekdays(umsatzdaten$Datum))
 levels(umsatzdaten$Wochentag)<-ordentlicheWoche
-
-
-
 kiwo <- read_csv(file.path('Daten','kiwo.csv',fsep = .Platform$file.sep))
-
-
 wetter <- read_csv(file.path('Daten','wetter.csv',fsep = .Platform$file.sep))
-
-
-
 ```
 
 ```{r Charakteristika der Datensätze anzeigen lassen}
@@ -35,8 +25,6 @@ wetter <- read_csv(file.path('Daten','wetter.csv',fsep = .Platform$file.sep))
 names(umsatzdaten) 
 names(kiwo) 
 names(wetter) 
-
-
 #Mehr Informationen zu den Datensätzen anzeigen
 skim(umsatzdaten)
 skim(kiwo)
@@ -48,8 +36,6 @@ skim(wetter)
 Joinen von Daten
 
 ```{r Joine kiwo-daten an Umsatzdaten und Wetter-Daten an Umsatzdaten}
-
-
 umsatzdaten_kiwo<-left_join(umsatzdaten,kiwo, by="Datum")
 names(umsatzdaten_kiwo)
 umsatzdaten_kiwo_wetter<-left_join(umsatzdaten_kiwo , wetter, by="Datum")

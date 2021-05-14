@@ -2,21 +2,6 @@
 title: "Model"
 output: html_document
 ---
-
-
-```{r }
-#Multiple linear regression Umsatz and Temperatur, Bewölkung, Windgeschwindigkeit
-umsatz <- umsatzWetter[["Umsatz"]]
-temperatur <- umsatzWetter[["Temperatur"]]
-bewoelkung <- umsatzWetter[["Bewoelkung"]]
-windgeschwindigkeit <- umsatzWetter[["Windgeschwindigkeit"]]
-model <- lm(umsatz ~ temperatur+bewoelkung+windgeschwindigkeit)
-summary(model)
-```
-
-
-Alternative von Anke
-
 ```{r Zwei Modelle, stepwise Regression, nutzt Modell-Syntax,}
 #data<-read_csv(file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
 data<-umsatzdaten_kiwo_wetter
@@ -32,17 +17,33 @@ summary(model_M1)
 M2<-update(M1,.~.+Windgeschwindigkeit)
 model_M2 <- lm(M2,data)
 summary(model_M2)
-
 #Aufnahme von Wochentag als zusätzlichen Prädiktor
 #Dummy-Variablen, Montag ist Referenz (=0)
 M3<-update(M1,.~.+Windgeschwindigkeit+Wochentag)
 model_M3 <- lm(M3,data)
 summary(model_M3)
 #Interpretation: samstags und sonntags wird im Vergleich zu montags sig. mehr Umsatz erzielt, anderen Tage unterscheiden sich auf 5% Niveau nicht von montags (Mittwoch etwas mehr, aber nur auf 10% sig, freitags einziger Wochentag, an dem noch weniger als montags verkauft wird)
-
-
-
 #Modellvergleich
 anova(model_M1,model_M2,model_M3)
 #Interpretation: Aufnahme von Windgeschwindigkeit erhöht nicht die Modellpassung, Aufnahme von Wochentags-Dummies wohl
 ```
+
+```{r}
+#Variablen mit der linearen Regression ausprobieren und R-Squared vergleichen. Die Variablen mit dem größten Einfluss behalten
+
+M1<-Umsatz~Temperatur
+model_M1<-lm(M1, umsatzdaten_kiwo_wetter)
+summary(model_M1)
+#R-Squared 0.04856
+
+M2<-update(M1,.~.+Wochentag)
+model_M2<-lm(M2,umsatzdaten_kiwo_wetter)
+summary(model_M2)
+#R-Squared 0.07637
+
+M3<-update(M2,.~.+KielerWoche)
+model_M3<-lm(M3, umsatzdaten_kiwo_wetter)
+summary(model_M3)
+#R-Squared 0.07523
+```
+
