@@ -21,7 +21,7 @@ library(lubridate) #Umgang mit Kalender-Daten
 #die folgenden Pakete sind beim Daten Explorieren sehr hilfreich... und vermutlich nicht vorinstalliert bei Euch
 
 library(skimr)
-#library(DataExplorer)
+library(DataExplorer)
 #library(car) 
 
 ```
