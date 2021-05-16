@@ -10,6 +10,26 @@ skim(umsatzdaten_kiwo_wetter)
 
 ```
 
+# Analyse der Ausreißer
+
+```{r Ausreißeranalyse}
+boxplot(umsatzdaten_kiwo_wetter$Temperatur)
+boxplot(umsatzdaten_kiwo_wetter$Bewoelkung)
+# beides ok
+
+boxplot(umsatzdaten_kiwo_wetter$Umsatz)
+#Ups, Probleme
+
+ggplot(umsatzdaten_kiwo_wetter) + 
+geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz))
+
+#Auch auf Ebene der Warengruppen bleiben hier Probleme in der Datenqualität beim Umsatz 
+#TODO Entscheidung für Umgehen damit treffen
+
+```
+
+
+
 
 
 
@@ -81,6 +101,5 @@ skim(umsatzdaten_kiwo_wetter)
 
 
 ```
-
 
 

@@ -2,7 +2,7 @@
 title: "Model"
 output: html_document
 ---
-#Beginn ALs Modelle
+# Beginn ALs Modelle
 
 ```{r Zwei Modelle, stepwise Regression, nutzt Modell-Syntax,}
 #data<-read_csv(file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
@@ -81,7 +81,7 @@ Prüfung Modellgüte für das Modell 4: Umsatz ~ Temperatur + KielerWoche + Bewo
 plot(cooks.distance(model_M4), pch = 16, col = "blue")
 ```
 
-#Ende ALs Modelle
+# Ende ALs Modelle
 
 
 ```{r}
