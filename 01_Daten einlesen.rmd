@@ -30,6 +30,8 @@ skim(umsatzdaten)
 skim(kiwo)
 skim(wetter)
 
+#Beobachtung: Bewoelkung hat fehlende Werte.
+
 ```
 
 
@@ -40,8 +42,13 @@ umsatzdaten_kiwo<-left_join(umsatzdaten,kiwo, by="Datum")
 names(umsatzdaten_kiwo)
 umsatzdaten_kiwo_wetter<-left_join(umsatzdaten_kiwo , wetter, by="Datum")
 names(umsatzdaten_kiwo_wetter)
+
 write.csv(umsatzdaten_kiwo_wetter,file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
 
+
+
 ```
+
+
 
 
