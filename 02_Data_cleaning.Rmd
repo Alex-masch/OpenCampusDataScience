@@ -3,14 +3,16 @@ title: "Data_cleaning"
 output: html_document
 ---
 
+## R Markdown
 
-Delete all rows with n/a in Wettercode
+#Delete all rows with n/a in Wettercode
 
 ```{r cars}
-umsatzWetter <- left_join(umsatzdaten,wetter, by="Datum")
-umsatzWetter <- umsatzWetter %>% drop_na(Wettercode)
+#Im Dataframe wetter n/a löschen
+#umsatzdaten_kiwo_wetter <- umsatzdaten_kiwo_wetter %>% drop_na(Wettercode)
+
+#Im Dataframe Kiwo n/a durch 0 ersetzen
+umsatzdaten_kiwo_wetter[is.na(umsatzdaten_kiwo_wetter)] <- 0
 ```
-
-
 
 
