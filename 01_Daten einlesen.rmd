@@ -15,8 +15,19 @@ umsatzdaten <- read_csv(file.path('Daten','umsatzdaten_gekuerzt.csv',fsep = .Pla
 ordentlicheWoche <- c('Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag')
 umsatzdaten$Wochentag <- as.factor(weekdays(umsatzdaten$Datum))
 levels(umsatzdaten$Wochentag)<-ordentlicheWoche
+
+
+umsatzdaten$Warengruppe <- factor(umsatzdaten$Warengruppe,
+levels = c(1,2,3,4,5,6),
+labels = c("Brot", "Broetchen", "Croissant","Konditorei","Kuchen","Saisonbrote"))
+
+
 kiwo <- read_csv(file.path('Daten','kiwo.csv',fsep = .Platform$file.sep))
 wetter <- read_csv(file.path('Daten','wetter.csv',fsep = .Platform$file.sep))
+
+
+
+
 ```
 
 ```{r Charakteristika der Datensätze anzeigen lassen}
@@ -29,6 +40,8 @@ names(wetter)
 skim(umsatzdaten)
 skim(kiwo)
 skim(wetter)
+
+#Beobachtung: Bewoelkung hat fehlende Werte.
 
 ```
 
@@ -55,9 +68,17 @@ umsatzdaten_kiwo<-left_join(umsatzdaten,kiwo, by="Datum")
 names(umsatzdaten_kiwo)
 umsatzdaten_kiwo_wetter<-left_join(umsatzdaten_kiwo , wetter, by="Datum")
 names(umsatzdaten_kiwo_wetter)
+
 write.csv(umsatzdaten_kiwo_wetter,file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
+
+
 
 ```
 
 
+<<<<<<< HEAD
 >>>>>>> 3ecac330827a418d93e57afece716347ebb860be
+=======
+
+
+>>>>>>> 02812e85cf618b86cbabad65d313243da1e036f2

@@ -1,6 +1,6 @@
 ---
 title: "Vorbereitung - Feiertage von JSON-Archiv importieren"
-output: html_documen
+output: html_document
 ---
 
 ```{r}
@@ -50,6 +50,10 @@ feiertage13_14_15_16_17_18_tbl<-full_join(feiertage13_14_15_16_17_tbl,
                                           feiertage18_tbl)
 feiertage13_14_15_16_17_18_19_tbl<-full_join(feiertage13_14_15_16_17_18_tbl, 
                                              feiertage19_tbl)
+```
+
+```{r}
+#ToDo: Mit pivot_longer Spalten reduzieren und Datensatz in die Struktur Datum/Feiertage umwandeln, wobei Feiertage binär codiert wird
 ```
 
 

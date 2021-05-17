@@ -2,47 +2,105 @@
 title: "Model"
 output: html_document
 ---
+# Beginn ALs Modelle
+
 ```{r Zwei Modelle, stepwise Regression, nutzt Modell-Syntax,}
 #data<-read_csv(file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
 data<-umsatzdaten_kiwo_wetter
-#Multiple linear regression Umsatz vorhergesagt durch Temperatur und Bewölkung
+#Multiple linear regression Umsatz vorhergesagt durch Temperatur und KielerWoche
 #definiere Model
-M1<-Umsatz ~ Temperatur+Bewoelkung
+M1<-Umsatz ~ Temperatur+KielerWoche
 #führe Regression durch
-model_M1 <- lm(M1,data)
+model_M1 <- lm(M1,data,na.action=na.exclude)
 summary(model_M1)
-# Interpretation: Bewölkung hat keine Vorhersagewert für Umsatz über Temperatur hinaus
+# Interpretation: Sowohl Temperatur als auch Kieler Woche sind sig. Prädiktoren. 5% Varianzaufklären (also nix)
 
-#Aufnahme von Windgeschwindigkeit als zusätzlichen Prädiktor
-M2<-update(M1,.~.+Windgeschwindigkeit)
-model_M2 <- lm(M2,data)
+#Aufnahme von Bewoelkung als zusätzlichen Prädiktor
+M2<-update(M1,.~.+Bewoelkung)
+model_M2 <- lm(M2,data,na.action=na.exclude)
 summary(model_M2)
+#Interpretation: kein zusätzlicher Prädiktor 
+
+
 #Aufnahme von Wochentag als zusätzlichen Prädiktor
 #Dummy-Variablen, Montag ist Referenz (=0)
-M3<-update(M1,.~.+Windgeschwindigkeit+Wochentag)
-model_M3 <- lm(M3,data)
+M3<-update(M2,.~.+Wochentag)
+model_M3 <- lm(M3,data,na.action=na.exclude)
 summary(model_M3)
-#Interpretation: samstags und sonntags wird im Vergleich zu montags sig. mehr Umsatz erzielt, anderen Tage unterscheiden sich auf 5% Niveau nicht von montags (Mittwoch etwas mehr, aber nur auf 10% sig, freitags einziger Wochentag, an dem noch weniger als montags verkauft wird)
-#Modellvergleich
-anova(model_M1,model_M2,model_M3)
-#Interpretation: Aufnahme von Windgeschwindigkeit erhöht nicht die Modellpassung, Aufnahme von Wochentags-Dummies wohl
+#Interpretation: samstags und sonntags wird im Vergleich zu montags sig. mehr Umsatz erzielt, anderen Tage unterscheiden sich auf 5% Niveau nicht von montags (Mittwoch etwas mehr, aber nur auf 10% sig, donnerstags laut diesem Modell einziger Wochentag, an dem deskriptiv noch weniger als montags verkauft wird, nicht sig.)
+#Varianzaufklärung 7.6% (immer noch schlecht)
+
+#Aufnahme Warengruppe
+M4<-update(M3,.~.+as.factor(Warengruppe))
+model_M4 <- lm(M4,data,na.action=na.exclude)
+summary(model_M4)
+#Interpretation: Varianzaufklärung steigt sprunghaft an (auf 71%) Unterschiede Warengruppen sig., aber "plötzlich" werden auch teilweise die Wochentage sig. (etwa Dienstag)
+
+#Aufnahme Wettercode
+M5<-update(M4,.~.+as.factor(Wettercode))
+model_M5 <- lm(M5,data,na.action=na.exclude)
+summary(model_M5)
+#Interpretation: einzelne Codes sig. Einfluss, kaum Veränderung in Varianzaufklärung, diese sinkt etwas, es sind aber wegen der Missing-Struktur auch 2602 Datenpunkte weniger (solange kein Umgang mit den fehlenden Wettercodes)
+
+#Aufnahme Windgeschwindigkeit
+M6<-update(M5,.~.+Windgeschwindigkeit)
+model_M6 <- lm(M6,data,na.action=na.exclude)
+summary(model_M6)
+#Interpretation: sig. Einfluss über Wettercodes hinaus, und zwar positiv, kaum Veränderung in Varianzaufklärung
+
+#Modellvergleiche 1-4 (5 und 6 geht nicht in den Vergleich ein, weil es auf weniger Datenpunkten beruht)
+anova(model_M1,model_M2,model_M3, model_M4)
+#Interpretation: Modelle 3,4 stellen jeweils eine Verbesserung der Modellpassung dar, 2 im Vergleich zu 1 gerade knapp nicht
+
+#Modellvergleich 5-6
+anova(model_M5, model_M6)
+#M6 nochmal besser als M5
+
 ```
+
+Das folgende Modell nimmt die Faktoren, die vorher sich als sig. erwiesen haben und neben den Hauptfaktoren werden sämtliche Interaktionen als Prädiktoren mit aufgenommen. Die Ergebnisse sind nicht wirklich interpretierbar. Aber die Varianzaufklärung steigt auf fast 80%
+
+Die Ausgabe des Modells habe ich unterdrückt, da es sehr lange wäre.
+
+```{r totales overfitting}
+
+M_over<-Umsatz ~ Temperatur*KielerWoche* Wochentag*as.factor(Warengruppe)
+model_M_over <- lm(M_over,data,na.action=na.exclude)
+#Ausgabe R-Squared
+#summary(model_M_over) #auskommentieren, um lange Ausgabe zu ersparen
+summary(model_M_over)$r.squared
+
+
+```
+
+
+Prüfung Modellgüte für das Modell 4: Umsatz ~ Temperatur + KielerWoche + Bewoelkung + Wochentag     as.factor(Warengruppe)
+--> weist auf Probleme hin, vgl. oben, Ausreißer in der Variable Umsatz
+
+```{r Modellgüte abschätzen}
+plot(cooks.distance(model_M4), pch = 16, col = "blue")
+```
+
+
+
+# Ende ALs Modelle
+
 
 ```{r}
 #Variablen mit der linearen Regression ausprobieren und R-Squared vergleichen. Die Variablen mit dem größten Einfluss behalten
 
 M1<-Umsatz~Temperatur
-model_M1<-lm(M1, umsatzdaten_kiwo_wetter)
+model_M1<-lm(M1, umsatzdaten_kiwo_wetter,na.action=na.exclude)
 summary(model_M1)
 #R-Squared 0.04856
 
 M2<-update(M1,.~.+Wochentag)
-model_M2<-lm(M2,umsatzdaten_kiwo_wetter)
+model_M2<-lm(M2,umsatzdaten_kiwo_wetter,na.action=na.exclude)
 summary(model_M2)
 #R-Squared 0.07637
 
 M3<-update(M2,.~.+KielerWoche)
-model_M3<-lm(M3, umsatzdaten_kiwo_wetter)
+model_M3<-lm(M3, umsatzdaten_kiwo_wetter,na.action=na.exclude)
 summary(model_M3)
 #R-Squared 0.07523
 ```
