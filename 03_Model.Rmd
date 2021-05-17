@@ -81,6 +81,8 @@ Prüfung Modellgüte für das Modell 4: Umsatz ~ Temperatur + KielerWoche + Bewo
 plot(cooks.distance(model_M4), pch = 16, col = "blue")
 ```
 
+
+
 # Ende ALs Modelle
 
 

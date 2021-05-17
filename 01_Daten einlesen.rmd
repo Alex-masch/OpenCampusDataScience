@@ -15,8 +15,19 @@ umsatzdaten <- read_csv(file.path('Daten','umsatzdaten_gekuerzt.csv',fsep = .Pla
 ordentlicheWoche <- c('Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag')
 umsatzdaten$Wochentag <- as.factor(weekdays(umsatzdaten$Datum))
 levels(umsatzdaten$Wochentag)<-ordentlicheWoche
+
+
+umsatzdaten$Warengruppe <- factor(umsatzdaten$Warengruppe,
+levels = c(1,2,3,4,5,6),
+labels = c("Brot", "Broetchen", "Croissant","Konditorei","Kuchen","Saisonbrote"))
+
+
 kiwo <- read_csv(file.path('Daten','kiwo.csv',fsep = .Platform$file.sep))
 wetter <- read_csv(file.path('Daten','wetter.csv',fsep = .Platform$file.sep))
+
+
+
+
 ```
 
 ```{r Charakteristika der Datensätze anzeigen lassen}
