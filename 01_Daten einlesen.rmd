@@ -4,6 +4,7 @@ output: html_document
 ---
 
 
+# Daten einlesen
 Daten werden im Hintergrund hier eingelesen.
 
 ```{r Daten einlesen, include=FALSE}
@@ -12,10 +13,11 @@ Daten werden im Hintergrund hier eingelesen.
 # Einlesen der Umsatzdaten
 umsatzdaten <- read_csv(file.path('Daten','umsatzdaten_gekuerzt.csv',fsep = .Platform$file.sep))
 # Erstellung der Variable mit dem Wochentag
-#TODO: Prüfen, ob das stimmt
+
 ordentlicheWoche <- c('Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag')
-umsatzdaten$Wochentag <- as.factor(weekdays(umsatzdaten$Datum))
-levels(umsatzdaten$Wochentag)<-ordentlicheWoche
+umsatzdaten$Wochentag <- factor(weekdays(umsatzdaten$Datum),
+levels=ordentlicheWoche)
+
 
 
 umsatzdaten$Warengruppe <- factor(umsatzdaten$Warengruppe,
@@ -34,26 +36,27 @@ wetter <- read_csv(file.path('Daten','wetter.csv',fsep = .Platform$file.sep))
 ```{r Charakteristika der Datensätze anzeigen lassen}
 
 #Anzeigen, welche Variablen in den Datensätzen sind (ohne weitere Information , nur Name) 
-names(umsatzdaten) 
-names(kiwo) 
-names(wetter) 
+#names(umsatzdaten) 
+#names(kiwo)
+#names(wetter) 
 #Mehr Informationen zu den Datensätzen anzeigen
 skim(umsatzdaten)
-skim(kiwo)
 skim(wetter)
+skim(kiwo)
+
 
 #Beobachtung: Bewoelkung hat fehlende Werte.
 
 ```
 
 
-Joinen von Daten
+# Daten zusammenfügen
 
 ```{r Joine kiwo-daten an Umsatzdaten und Wetter-Daten an Umsatzdaten}
 umsatzdaten_kiwo<-left_join(umsatzdaten,kiwo, by="Datum")
-names(umsatzdaten_kiwo)
+#names(umsatzdaten_kiwo)
 umsatzdaten_kiwo_wetter<-left_join(umsatzdaten_kiwo , wetter, by="Datum")
-names(umsatzdaten_kiwo_wetter)
+#names(umsatzdaten_kiwo_wetter)
 
 write.csv(umsatzdaten_kiwo_wetter,file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
 

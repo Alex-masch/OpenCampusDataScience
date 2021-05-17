@@ -1,7 +1,8 @@
 ---
-title: "Master"
+title: "Gruppe 4"
 output: html_document
 ---
+
 
 ```{r Setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE) #Der Code in den Chunks soll im Output stehen
@@ -42,5 +43,11 @@ Hier wird 02_Data_cleaning.rmd eingebunden
 Hier wird 03_Model.rmd eingebunden
 
 ```{r, child='03_Model.rmd'}
+
+```
+
+Hier wird 04_Vorhersagen.rmd eingebunden
+
+```{r, child='04_Vorhersagen.rmd'}
 
 ```
