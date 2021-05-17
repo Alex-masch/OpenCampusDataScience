@@ -1,0 +1,45 @@
+---
+title: "Vorhersagemodelle"
+output: html_document
+---
+
+
+
+```{r Prädiktion Umsätze 7.6.2019 und 12.6.2019 (ersten zwei Tage nach Ende der Umsatzdaten) auf Basis des Modells 4}
+
+
+Vorhersagedaten<-data.frame(Datum=c(ymd(20190607),ymd(20190609),ymd(20190113)))
+Warengruppendaten<-data.frame(Warengruppe=c(1:6))
+Vorhersagedaten <-dplyr::full_join(Warengruppendaten,Vorhersagedaten,by = character())
+
+Vorhersagedaten$Warengruppe <- factor(Vorhersagedaten$Warengruppe,
+levels = c(1,2,3,4,5,6),
+labels = c("Brot", "Broetchen", "Croissant","Konditorei","Kuchen","Saisonbrote"))
+#skim(Vorhersagedaten)
+
+Vorhersagedaten$Wochentag <- as.factor(weekdays(Vorhersagedaten$Datum))
+#levels(Vorhersagedaten$Wochentag)<-ordentlicheWoche
+
+
+Vorhersagedaten_kiwo<-left_join(Vorhersagedaten,kiwo, by="Datum")
+names(Vorhersagedaten_kiwo)
+Vorhersagedaten_kiwo_wetter<-left_join(Vorhersagedaten_kiwo , wetter, by="Datum")
+names(Vorhersagedaten_kiwo_wetter)
+  
+#KielerWoche-Variable auf 0/1 codieren
+
+Vorhersagedaten_kiwo_wetter$KielerWoche[is.na(Vorhersagedaten_kiwo_wetter$KielerWoche)] <- 0
+
+
+Vorhersage <- predict(object=model_M4, newdata = Vorhersagedaten_kiwo_wetter, type = "response", interval = "confidence", na.action = na.exclude)
+Vorhersage
+
+class(Vorhersage)
+
+Vorhersagedaten_kiwo_wetter_mit_Vorhersage <- dplyr::bind_cols(Vorhersagedaten_kiwo_wetter, as.data.frame(Vorhersage))
+
+#in dieser Datei sind "fit" die Prädiktionen für die jeweiligen Datenpunkte
+
+
+
+```

@@ -79,6 +79,8 @@ Prüfung Modellgüte für das Modell 4: Umsatz ~ Temperatur + KielerWoche + Bewo
 
 ```{r Modellgüte abschätzen}
 plot(cooks.distance(model_M4), pch = 16, col = "blue")
+
+#TODO aus diesem Vektor der class numeric die Ausreißer identifizieren, dann entweder entsprechenden Datensätze löschen oder Umsatz auf einen Max-Wert setzen oder auf Mean setzen....
 ```
 
 

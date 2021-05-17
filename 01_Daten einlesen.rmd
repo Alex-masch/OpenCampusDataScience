@@ -12,6 +12,7 @@ Daten werden im Hintergrund hier eingelesen.
 # Einlesen der Umsatzdaten
 umsatzdaten <- read_csv(file.path('Daten','umsatzdaten_gekuerzt.csv',fsep = .Platform$file.sep))
 # Erstellung der Variable mit dem Wochentag
+#TODO: Prüfen, ob das stimmt
 ordentlicheWoche <- c('Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag')
 umsatzdaten$Wochentag <- as.factor(weekdays(umsatzdaten$Datum))
 levels(umsatzdaten$Wochentag)<-ordentlicheWoche
