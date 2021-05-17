@@ -19,7 +19,7 @@ summary(model_M1)
 M2<-update(M1,.~.+Bewoelkung)
 model_M2 <- lm(M2,data,na.action=na.exclude)
 summary(model_M2)
-#Interpretation: kein zusätzlicher Prädiktor (knapp)
+#Interpretation: kein zusätzlicher Prädiktor 
 
 
 #Aufnahme von Wochentag als zusätzlichen Prädiktor
@@ -27,7 +27,7 @@ summary(model_M2)
 M3<-update(M2,.~.+Wochentag)
 model_M3 <- lm(M3,data,na.action=na.exclude)
 summary(model_M3)
-#Interpretation: samstags und sonntags wird im Vergleich zu montags sig. mehr Umsatz erzielt, anderen Tage unterscheiden sich auf 5% Niveau nicht von montags (Mittwoch etwas mehr, aber nur auf 10% sig, donnerstags laut diesem Modell einziger Wochentag, an dem noch weniger als montags verkauft wird)
+#Interpretation: samstags und sonntags wird im Vergleich zu montags sig. mehr Umsatz erzielt, anderen Tage unterscheiden sich auf 5% Niveau nicht von montags (Mittwoch etwas mehr, aber nur auf 10% sig, donnerstags laut diesem Modell einziger Wochentag, an dem deskriptiv noch weniger als montags verkauft wird, nicht sig.)
 #Varianzaufklärung 7.6% (immer noch schlecht)
 
 #Aufnahme Warengruppe
@@ -46,11 +46,11 @@ summary(model_M5)
 M6<-update(M5,.~.+Windgeschwindigkeit)
 model_M6 <- lm(M6,data,na.action=na.exclude)
 summary(model_M6)
-#Interpretation: sig. Einfluss über Wettercodes hinaus, kaum Veränderung in Varianzaufklärung
+#Interpretation: sig. Einfluss über Wettercodes hinaus, und zwar positiv, kaum Veränderung in Varianzaufklärung
 
-#Modellvergleiche 1-4 (5 geht nicht in den Vergleich ein, weil es auf weniger Datenpunkten beruht)
+#Modellvergleiche 1-4 (5 und 6 geht nicht in den Vergleich ein, weil es auf weniger Datenpunkten beruht)
 anova(model_M1,model_M2,model_M3, model_M4)
-#Interpretation: Modelle 3,4 stellen jeweils eine Verbesserung der Modellpassung dar
+#Interpretation: Modelle 3,4 stellen jeweils eine Verbesserung der Modellpassung dar, 2 im Vergleich zu 1 gerade knapp nicht
 
 #Modellvergleich 5-6
 anova(model_M5, model_M6)

@@ -1129,7 +1129,7 @@ summary(model_M2)</code></pre>
 ## Residual standard error: 139.3 on 10895 degrees of freedom
 ## Multiple R-squared:  0.04906,    Adjusted R-squared:  0.0488 
 ## F-statistic: 187.3 on 3 and 10895 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>#Interpretation: kein zusätzlicher Prädiktor (knapp)
+<pre class="r"><code>#Interpretation: kein zusätzlicher Prädiktor 
 
 
 #Aufnahme von Wochentag als zusätzlichen Prädiktor
@@ -1163,7 +1163,7 @@ summary(model_M3)</code></pre>
 ## Residual standard error: 137.2 on 10889 degrees of freedom
 ## Multiple R-squared:  0.07715,    Adjusted R-squared:  0.07639 
 ## F-statistic: 101.2 on 9 and 10889 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>#Interpretation: samstags und sonntags wird im Vergleich zu montags sig. mehr Umsatz erzielt, anderen Tage unterscheiden sich auf 5% Niveau nicht von montags (Mittwoch etwas mehr, aber nur auf 10% sig, donnerstags laut diesem Modell einziger Wochentag, an dem noch weniger als montags verkauft wird)
+<pre class="r"><code>#Interpretation: samstags und sonntags wird im Vergleich zu montags sig. mehr Umsatz erzielt, anderen Tage unterscheiden sich auf 5% Niveau nicht von montags (Mittwoch etwas mehr, aber nur auf 10% sig, donnerstags laut diesem Modell einziger Wochentag, an dem deskriptiv noch weniger als montags verkauft wird, nicht sig.)
 #Varianzaufklärung 7.6% (immer noch schlecht)
 
 #Aufnahme Warengruppe
@@ -1324,9 +1324,9 @@ summary(model_M6)</code></pre>
 ##   (2602 observations deleted due to missingness)
 ## Multiple R-squared:  0.7029, Adjusted R-squared:  0.7015 
 ## F-statistic: 514.1 on 38 and 8258 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>#Interpretation: sig. Einfluss über Wettercodes hinaus, kaum Veränderung in Varianzaufklärung
+<pre class="r"><code>#Interpretation: sig. Einfluss über Wettercodes hinaus, und zwar positiv, kaum Veränderung in Varianzaufklärung
 
-#Modellvergleiche 1-4 (5 geht nicht in den Vergleich ein, weil es auf weniger Datenpunkten beruht)
+#Modellvergleiche 1-4 (5 und 6 geht nicht in den Vergleich ein, weil es auf weniger Datenpunkten beruht)
 anova(model_M1,model_M2,model_M3, model_M4)</code></pre>
 <pre><code>## Analysis of Variance Table
 ## 
@@ -1342,7 +1342,7 @@ anova(model_M1,model_M2,model_M3, model_M4)</code></pre>
 ## 4  10884  63755482  5 141361460 4826.4968 &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<pre class="r"><code>#Interpretation: Modelle 3,4 stellen jeweils eine Verbesserung der Modellpassung dar
+<pre class="r"><code>#Interpretation: Modelle 3,4 stellen jeweils eine Verbesserung der Modellpassung dar, 2 im Vergleich zu 1 gerade knapp nicht
 
 #Modellvergleich 5-6
 anova(model_M5, model_M6)</code></pre>
