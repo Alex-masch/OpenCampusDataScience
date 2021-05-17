@@ -65,7 +65,7 @@ Alternative 4: Missings auf einen bestimmten Wert setzen, 00 wäre Bewölkungsen
 
 
 
-#Datenaufbereitung (Vorschlag AL):
+# Datenaufbereitung (Vorschlag AL):
 
 ```{r Vorschlag cleaning}
 #KielerWoche-Variable auf 0/1 codieren

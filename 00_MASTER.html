@@ -832,7 +832,9 @@ geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz))</code></pre>
 <p><strong>Anmerkung AL</strong>: Warum alle anderen n/a’s im Datensatz auf 0 setzen? Das verzerrt ja unsere Daten nur weiter unnötig. Davon würde ich abraten. Eine fehlende Temperatur ist ja besser als ein eingetragener Gefrierpunkt</p>
 <pre class="r"><code>#Im Dataframe Kiwo n/a durch 0 ersetzen
 #umsatzdaten_kiwo_wetter[is.na(umsatzdaten_kiwo_wetter)] &lt;- 0</code></pre>
-<p>#Datenaufbereitung (Vorschlag AL):</p>
+</div>
+<div id="datenaufbereitung-vorschlag-al" class="section level1">
+<h1>Datenaufbereitung (Vorschlag AL):</h1>
 <pre class="r"><code>#KielerWoche-Variable auf 0/1 codieren
 
 umsatzdaten_kiwo_wetter$KielerWoche[is.na(umsatzdaten_kiwo_wetter$KielerWoche)] &lt;- 0
