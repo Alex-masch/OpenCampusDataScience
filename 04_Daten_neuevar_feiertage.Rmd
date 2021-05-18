@@ -1,0 +1,62 @@
+---
+title: "Vorbereitung - Feiertage von JSON-Archiv importieren"
+output: html_document
+---
+
+```{r}
+# Einlesen der Feiertage
+
+library(jsonlite)
+
+# url mit den Kalenderdaten zu Feiertagen
+url1 <- "https://feiertage-api.de/api/?jahr=2013&nur_land=SH"
+url2 <- "https://feiertage-api.de/api/?jahr=2014&nur_land=SH"
+url3 <- "https://feiertage-api.de/api/?jahr=2015&nur_land=SH"
+url4 <- "https://feiertage-api.de/api/?jahr=2016&nur_land=SH"
+url5 <- "https://feiertage-api.de/api/?jahr=2017&nur_land=SH"
+url6 <- "https://feiertage-api.de/api/?jahr=2018&nur_land=SH"
+url7 <- "https://feiertage-api.de/api/?jahr=2019&nur_land=SH"
+```
+
+```{r}
+# url lesen und data.frame erzeugen
+feiertage13 <- fromJSON(txt=url1)
+feiertage14 <- fromJSON(txt=url2)
+feiertage15 <- fromJSON(txt=url3)
+feiertage16 <- fromJSON(txt=url4)
+feiertage17 <- fromJSON(txt=url5)
+feiertage18 <- fromJSON(txt=url6)
+feiertage19 <- fromJSON(txt=url7)
+```
+
+```{r}
+feiertage13_tbl <- as_data_frame(feiertage13) #data frame erzeugen
+feiertage14_tbl <- as_data_frame(feiertage14) #data frame erzeugen
+feiertage15_tbl <- as_data_frame(feiertage15) #data frame erzeugen
+feiertage16_tbl <- as_data_frame(feiertage16) #data frame erzeugen
+feiertage17_tbl <- as_data_frame(feiertage17) #data frame erzeugen
+feiertage18_tbl <- as_data_frame(feiertage18) #data frame erzeugen
+feiertage19_tbl <- as_data_frame(feiertage19) #data frame erzeugen
+```
+
+```{r}
+feiertage13_14_tbl<-full_join(feiertage13_tbl, feiertage14_tbl) 
+#führt die Datentabellen zusammen
+feiertage13_14_15_tbl<-full_join(feiertage13_14_tbl, feiertage15_tbl)
+feiertage13_14_15_16_tbl<-full_join(feiertage13_14_15_tbl, feiertage16_tbl)
+feiertage13_14_15_16_17_tbl<-full_join(feiertage13_14_15_16_tbl, 
+                                       feiertage17_tbl)
+feiertage13_14_15_16_17_18_tbl<-full_join(feiertage13_14_15_16_17_tbl, 
+                                          feiertage18_tbl)
+feiertage13_14_15_16_17_18_19_tbl<-full_join(feiertage13_14_15_16_17_18_tbl, 
+                                             feiertage19_tbl)
+```
+
+```{r}
+#To Do: Mit pivot_longer Spalten reduzieren und Datensatz in die Struktur Datum/Feiertage umwandeln, wobei Feiertage in der Tabelle binär codiert wird
+```
+
+
+
+
+

@@ -1,6 +1,13 @@
 ---
+<<<<<<< HEAD
+title: "Master"
+output:
+  word_document: default
+  html_document: default
+=======
 title: "Gruppe 4"
 output: html_document
+>>>>>>> c0078917f828061de4bfa6bc21ed0cfc875d399a
 ---
 
 
