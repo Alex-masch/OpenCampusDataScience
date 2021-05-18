@@ -1,0 +1,55 @@
+---
+title: "Vorhersagemodelle"
+output: html_document
+---
+
+# Prädiktion 1 (Supervised Learning)
+
+aka: Ich nehme ein lineares Modell, das auf einen Datensatz gefittet wurde und sage mit den dort geschätzten Koeffizienten die Zielvariable auf Basis von einem neuen Datensatz vorher
+
+```{r Prädiktion Umsätze 7.6.2019 (Freitag, erster Tag nach Ende der Umsatzdaten) und 09.6.2019 (sonntag darauf) und zum Kontrast ein stürmischer kalter Mittwoch im Januar auf Basis des Modells 4}
+
+#wir basteln uns den Vorhersagedatensatz in der selben Form wie der, auf dem das Modell gefittet wurde
+Vorhersagedaten<-data.frame(Datum=c(ymd(20190607),ymd(20190609),ymd(20190109)))#hier für drei Tage
+Warengruppendaten<-data.frame(Warengruppe=c(1:6))
+Vorhersagedaten <-dplyr::full_join(Warengruppendaten,Vorhersagedaten,by = character())
+
+Vorhersagedaten$Warengruppe <- factor(Vorhersagedaten$Warengruppe,
+levels = c(1,2,3,4,5,6),
+labels = c("Brot", "Broetchen", "Croissant","Konditorei","Kuchen","Saisonbrote"))
+#skim(Vorhersagedaten)
+
+Vorhersagedaten$Wochentag <- factor(weekdays(Vorhersagedaten$Datum),
+levels=ordentlicheWoche)
+
+Vorhersagedaten_kiwo<-left_join(Vorhersagedaten,kiwo, by="Datum")
+#names(Vorhersagedaten_kiwo)
+Vorhersagedaten_kiwo_wetter<-left_join(Vorhersagedaten_kiwo , wetter, by="Datum")
+names(Vorhersagedaten_kiwo_wetter)
+  
+#KielerWoche-Variable auf 0/1 codieren
+Vorhersagedaten_kiwo_wetter$KielerWoche[is.na(Vorhersagedaten_kiwo_wetter$KielerWoche)] <- 0
+
+#Vorhersage berechnen
+Vorhersage <- predict(object=model_M4, newdata = Vorhersagedaten_kiwo_wetter, type = "response", interval = "confidence", na.action = na.exclude)
+
+#print(Vorhersage)
+#class(Vorhersage)#is ne doofe Matrix--> für Nutzung von dplyr-Routinen as.data.frame()
+
+Vorhersagedaten_kiwo_wetter_mit_Vorhersage <- dplyr::bind_cols(Vorhersagedaten_kiwo_wetter, as.data.frame(Vorhersage)) #in dieser Datei sind "fit" die Umsatz-Prädiktionen für die jeweiligen Datenpunkte, lwr und upr sind die Grenzen der Konfidenzintervalle
+
+
+ Vorhersagedaten_kiwo_wetter_mit_Vorhersage<- rename(Vorhersagedaten_kiwo_wetter_mit_Vorhersage,VorUmsatz = fit,UntereGrenzeKonfInt=lwr,ObereGrenzeKonfInt=upr)
+
+anzeige <-dplyr::filter(Vorhersagedaten_kiwo_wetter_mit_Vorhersage,Datum==ymd(20190607))
+anzeige <-dplyr::select(anzeige, c("Warengruppe","VorUmsatz","UntereGrenzeKonfInt","ObereGrenzeKonfInt"))
+
+
+```
+
+
+Die Vorhersage für den ersten Tag (`r ymd(20190607)`) nach Ende der Datenreihe ist:
+
+```{r echo=FALSE}
+anzeige
+```

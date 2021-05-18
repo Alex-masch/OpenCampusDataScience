@@ -4,7 +4,7 @@ output: html_document
 ---
 # Beginn ALs Modelle
 
-```{r Zwei Modelle, stepwise Regression, nutzt Modell-Syntax,}
+```{r stepwise Regression, nutzt Modell-Syntax,}
 #data<-read_csv(file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
 data<-umsatzdaten_kiwo_wetter
 #Multiple linear regression Umsatz vorhergesagt durch Temperatur und KielerWoche
@@ -27,14 +27,14 @@ summary(model_M2)
 M3<-update(M2,.~.+Wochentag)
 model_M3 <- lm(M3,data,na.action=na.exclude)
 summary(model_M3)
-#Interpretation: samstags und sonntags wird im Vergleich zu montags sig. mehr Umsatz erzielt, anderen Tage unterscheiden sich auf 5% Niveau nicht von montags (Mittwoch etwas mehr, aber nur auf 10% sig, donnerstags laut diesem Modell einziger Wochentag, an dem deskriptiv noch weniger als montags verkauft wird, nicht sig.)
+#Interpretation: samstags und sonntags wird im Vergleich zu montags sig. mehr Umsatz erzielt, anderen Tage unterscheiden sich auf 5% Niveau nicht von montags (mittwochs wird am wenigsten verkauft)
 #Varianzaufklärung 7.6% (immer noch schlecht)
 
 #Aufnahme Warengruppe
 M4<-update(M3,.~.+as.factor(Warengruppe))
 model_M4 <- lm(M4,data,na.action=na.exclude)
 summary(model_M4)
-#Interpretation: Varianzaufklärung steigt sprunghaft an (auf 71%) Unterschiede Warengruppen sig., aber "plötzlich" werden auch teilweise die Wochentage sig. (etwa Dienstag)
+#Interpretation: Varianzaufklärung steigt sprunghaft an (auf 71%) Unterschiede Warengruppen sig., aber "plötzlich" werden auch teilweise die Wochentage sig. (etwa Dienstag, Mittwoch)
 
 #Aufnahme Wettercode
 M5<-update(M4,.~.+as.factor(Wettercode))
@@ -79,6 +79,8 @@ Prüfung Modellgüte für das Modell 4: Umsatz ~ Temperatur + KielerWoche + Bewo
 
 ```{r Modellgüte abschätzen}
 plot(cooks.distance(model_M4), pch = 16, col = "blue")
+
+#TODO aus diesem Vektor der class numeric die Ausreißer identifizieren, dann entweder entsprechenden Datensätze löschen oder Umsatz auf einen Max-Wert setzen oder auf Mean setzen....
 ```
 
 

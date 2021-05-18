@@ -2,6 +2,8 @@
 title: "Data_cleaning"
 output: html_document
 ---
+# Datenstruktur und Missings
+
 ```{r Datenstruktur nochmal anschauen}
 
 skim(umsatzdaten_kiwo_wetter)
@@ -19,16 +21,17 @@ plot_missing(umsatzdaten_kiwo_wetter)
 ```{r Ausreißeranalyse}
 boxplot(umsatzdaten_kiwo_wetter$Temperatur)
 boxplot(umsatzdaten_kiwo_wetter$Bewoelkung)
-# beides ok
+boxplot(umsatzdaten_kiwo_wetter$Windgeschwindigkeit)
+# Windgeschwindigkeit hat ein paar Ausreißer, der Rest ok
 
 boxplot(umsatzdaten_kiwo_wetter$Umsatz)
-#Ups, Probleme
+#Ups, das sieht nicht gut aus... Probleme
 
 ggplot(umsatzdaten_kiwo_wetter) + 
 geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz))
 
 #Auch auf Ebene der Warengruppen bleiben hier Probleme in der Datenqualität beim Umsatz 
-#TODO Entscheidung für Umgehen damit treffen
+#TODO Entscheidung für Umgehen mit Ausreißern in Umsatz-Daten treffen
 
 ```
 
@@ -45,27 +48,23 @@ Alternative 1: Methode nutzen, die mit Missings umgehen kann (z.B. FIML). Dann k
 
 Alternative 2: bei den lm-calls jeweils als Argument einfügen: na.action=na.exclude. Vorteil: Datensatz bleibt so, wie er ist, aber in den lm-calls werden trotzdem nur die vollständigen Beobachtungen genutzt.
 
-Alternaive 3: Missings in den Wettercodes rekonstruieren, z.B. aus Bewölkung und Temperatur --> dazu muss man aber sicher wissen, was die Wettercodes bedeuten... hm
+Alternative 3: Missings in den Wettercodes rekonstruieren, z.B. aus Bewölkung und Temperatur --> dazu muss man aber sicher wissen, was die Wettercodes bedeuten... hmmmm
 
-Alternative 4: Missings auf einen bestimmten Wert setzen, 00 wäre Bewölkungsentwicklung nicht beobachtet
+Alternative 4: Missings auf einen bestimmten Wert setzen, welchen?
+
+--> Gespräch am 17.5.2021: Wir ignorieren die Wettercodes, nehmen an, dass sie sich aus Bewölkung, Temperatur und Windgeschwindigkeit zusammensetzen und nutzen sie im Moment nicht weiter.
 
 
 ```{r }
 #Im Dataframe wetter n/a löschen
 #umsatzdaten_kiwo_wetter <- umsatzdaten_kiwo_wetter %>% drop_na(Wettercode) #AL: wegen Anmerkung oben auskommentiert
-```
 
-
-**Anmerkung AL**: Warum alle anderen n/a's im Datensatz auf 0 setzen? Das verzerrt ja unsere Daten nur weiter unnötig. Davon würde ich abraten. Eine fehlende Temperatur ist ja besser als ein eingetragener Gefrierpunkt
-
-```{r }
-#Im Dataframe Kiwo n/a durch 0 ersetzen
-#umsatzdaten_kiwo_wetter[is.na(umsatzdaten_kiwo_wetter)] <- 0
 ```
 
 
 
-# Datenaufbereitung (Vorschlag AL):
+# Datenaufbereitung
+KielerWoche dichotomisieren; Bewoelkung, Temperatur und Windgeschwindigkeit mittlere Werte imputieren
 
 ```{r Vorschlag cleaning}
 #KielerWoche-Variable auf 0/1 codieren
@@ -74,34 +73,15 @@ umsatzdaten_kiwo_wetter$KielerWoche[is.na(umsatzdaten_kiwo_wetter$KielerWoche)] 
 
 #Bewoelkung-Variable NAs auf mean(Bewoelkung) kodieren (mittlere Werte im Datensatz), denn: es sind nur 10 Datensätze, die das betrifft und in diesen Fällen gibt es keinen klaren Temperaturtrend
 
-#Mittelwert_vor<-mean(umsatzdaten_kiwo_wetter$Bewoelkung, na.rm=TRUE)
 umsatzdaten_kiwo_wetter$Bewoelkung[is.na(umsatzdaten_kiwo_wetter$Bewoelkung)] <- mean(umsatzdaten_kiwo_wetter$Bewoelkung, na.rm=TRUE)
-#Mittelwert_nach<-mean(umsatzdaten_kiwo_wetter$Bewoelkung, na.rm=TRUE)
-#Mittelwert_vor
-#Mittelwert_nach #hab ich nur zum Checken der Manipulation genutzt
 
 
-
-
-
-#Gleiche Logik für Temperatur und Windgeschwindigkeit
-
-#Mittelwert_vor<-mean(umsatzdaten_kiwo_wetter$Temperatur, na.rm=TRUE)
 umsatzdaten_kiwo_wetter$Temperatur[is.na(umsatzdaten_kiwo_wetter$Temperatur)] <- mean(umsatzdaten_kiwo_wetter$Temperatur, na.rm=TRUE)
-#Mittelwert_nach<-mean(umsatzdaten_kiwo_wetter$Temperatur, na.rm=TRUE)
-#Mittelwert_vor
-#Mittelwert_nach #hab ich nur zum Checken der Manipulation genutzt
 
-#Mittelwert_vor<-mean(umsatzdaten_kiwo_wetter$Windgeschwindigkeit, na.rm=TRUE)
 umsatzdaten_kiwo_wetter$Windgeschwindigkeit[is.na(umsatzdaten_kiwo_wetter$Windgeschwindigkeit)] <- mean(umsatzdaten_kiwo_wetter$Windgeschwindigkeit, na.rm=TRUE)
-#Mittelwert_nach<-mean(umsatzdaten_kiwo_wetter$Windgeschwindigkeit, na.rm=TRUE)
-#Mittelwert_vor
-#Mittelwert_nach #hab ich nur zum Checken der Manipulation genutzt
 
 
-
-skim(umsatzdaten_kiwo_wetter)
-
+skim(umsatzdaten_kiwo_wetter)#Datenstruktur nochmal prüfen
 
 
 ```
