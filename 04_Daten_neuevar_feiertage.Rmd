@@ -53,7 +53,7 @@ feiertage13_14_15_16_17_18_19_tbl<-full_join(feiertage13_14_15_16_17_18_tbl,
 ```
 
 ```{r}
-#ToDo: Mit pivot_longer-Befehl Spalten reduzieren und Datensatz in die Struktur Datum/Feiertage umwandeln, wobei Feiertage in der Tabelle binär codiert wird
+#ToDo: Mit pivot_longer Spalten reduzieren und Datensatz in die Struktur Datum/Feiertage umwandeln, wobei Feiertage in der Tabelle binär codiert wird
 ```
 
 
