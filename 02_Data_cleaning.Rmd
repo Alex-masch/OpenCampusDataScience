@@ -33,6 +33,11 @@ geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz))
 #Auch auf Ebene der Warengruppen bleiben hier Probleme in der Datenqualität beim Umsatz 
 #TODO Entscheidung für Umgehen mit Ausreißern in Umsatz-Daten treffen
 
+#teste, ob man bestimmte Warengruppe zusammenfassen kann
+#Mittelwertsunterschiede im Umsatz pro Gruppe
+diff<-aov(Umsatz~Warengruppe, data=umsatzdaten_kiwo_wetter)
+TukeyHSD(diff)
+#Interpretation: Alle Unterschiede sig., entsprechend macht es keinen Sinn, Warengruppen zusammenzufassen.
 ```
 
 

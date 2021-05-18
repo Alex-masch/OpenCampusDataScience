@@ -2,7 +2,7 @@
 title: "Model"
 output: html_document
 ---
-# Beginn ALs Modelle
+# Beginn ALs Modelle (Nicholas wird die nochmal neu aufziehen)
 
 ```{r stepwise Regression, nutzt Modell-Syntax,}
 #data<-read_csv(file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
