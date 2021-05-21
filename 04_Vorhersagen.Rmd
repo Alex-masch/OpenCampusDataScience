@@ -53,3 +53,9 @@ Die Vorhersage für den ersten Tag (`r ymd(20190607)`) nach Ende der Datenreihe 
 ```{r echo=FALSE}
 anzeige
 ```
+
+```{r}
+install.packages("e1071")
+library("e1071")
+```
+
