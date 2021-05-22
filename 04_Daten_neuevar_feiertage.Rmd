@@ -40,8 +40,8 @@ feiertage19_tbl <- as_data_frame(feiertage19) #data frame erzeugen
 ```
 
 ```{r}
-feiertage13_14_tbl<-full_join(feiertage13_tbl, feiertage14_tbl) 
 #führt die Datentabellen zusammen
+feiertage13_14_tbl<-full_join(feiertage13_tbl, feiertage14_tbl) 
 feiertage13_14_15_tbl<-full_join(feiertage13_14_tbl, feiertage15_tbl)
 feiertage13_14_15_16_tbl<-full_join(feiertage13_14_15_tbl, feiertage16_tbl)
 feiertage13_14_15_16_17_tbl<-full_join(feiertage13_14_15_16_tbl, 
@@ -52,26 +52,18 @@ feiertage13_14_15_16_17_18_19_tbl<-full_join(feiertage13_14_15_16_17_18_tbl,
                                              feiertage19_tbl)
 ```
 
-```{r}
-#To Do: Mit pivot_longer Spalten reduzieren und Datensatz in die Struktur Datum/Feiertage umwandeln, wobei Feiertage in der Tabelle binär codiert wird
-```
 
 ```{r}
-summary(feiertage13_14_15_16_17_18_19_tbl)
-```
+# Datensatz umstrukturiert von "wide" mit mehreren Spalten auf "long", um die Daten konform zu unseren anderen Daten zu strukturieren. Umformung mit tidyverse-package. Zur Übergabe des Ergebnisses neue Variable feiertage_neu geschrieben
 
-
-```{r}
-
-feiertage13_14_15_16_17_18_19_tbl %>%
+feiertage_neu <- feiertage13_14_15_16_17_18_19_tbl %>%
   pivot_longer(everything(), names_to = "Feiertage", values_to = "Datum")
 
 ```
 
+
 ```{r}
-print(feiertage13_14_15_16_17_18_19_tbl)
+# Fehlende Werte "" = Leerzeichen und "NULL" durch "NA" in Datensatz ersetzt
+feiertage_neu$Datum[feiertage_neu$Datum == ""] <-NA
+feiertage_neu$Datum[feiertage_neu$Datum == "NULL"] <-NA
 ```
-
-
-
-
