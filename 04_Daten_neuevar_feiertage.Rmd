@@ -56,6 +56,21 @@ feiertage13_14_15_16_17_18_19_tbl<-full_join(feiertage13_14_15_16_17_18_tbl,
 #To Do: Mit pivot_longer Spalten reduzieren und Datensatz in die Struktur Datum/Feiertage umwandeln, wobei Feiertage in der Tabelle binär codiert wird
 ```
 
+```{r}
+summary(feiertage13_14_15_16_17_18_19_tbl)
+```
+
+
+```{r}
+
+feiertage13_14_15_16_17_18_19_tbl %>%
+  pivot_longer(everything(), names_to = "Feiertage", values_to = "Datum")
+
+```
+
+```{r}
+print(feiertage13_14_15_16_17_18_19_tbl)
+```
 
 
 

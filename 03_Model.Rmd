@@ -1,5 +1,5 @@
 ---
-title: "Model"
+title: "Modelle"
 output: html_document
 ---
 # Beginn ALs Modelle (Nicholas wird die nochmal neu aufziehen)

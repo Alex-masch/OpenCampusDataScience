@@ -31,17 +31,17 @@ names(Vorhersagedaten_kiwo_wetter)
 Vorhersagedaten_kiwo_wetter$KielerWoche[is.na(Vorhersagedaten_kiwo_wetter$KielerWoche)] <- 0
 
 #Vorhersage berechnen
-Vorhersage <- predict(object=model_M4, newdata = Vorhersagedaten_kiwo_wetter, type = "response", interval = "confidence", na.action = na.exclude)
+Vorhersage_lm <- predict(object=model_M4, newdata = Vorhersagedaten_kiwo_wetter, type = "response", interval = "confidence", na.action = na.exclude)
 
 #print(Vorhersage)
 #class(Vorhersage)#is ne doofe Matrix--> für Nutzung von dplyr-Routinen as.data.frame()
 
-Vorhersagedaten_kiwo_wetter_mit_Vorhersage <- dplyr::bind_cols(Vorhersagedaten_kiwo_wetter, as.data.frame(Vorhersage)) #in dieser Datei sind "fit" die Umsatz-Prädiktionen für die jeweiligen Datenpunkte, lwr und upr sind die Grenzen der Konfidenzintervalle
+Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm <- dplyr::bind_cols(Vorhersagedaten_kiwo_wetter, as.data.frame(Vorhersage_lm)) #in dieser Datei sind "fit" die Umsatz-Prädiktionen für die jeweiligen Datenpunkte, lwr und upr sind die Grenzen der Konfidenzintervalle
 
 
- Vorhersagedaten_kiwo_wetter_mit_Vorhersage<- rename(Vorhersagedaten_kiwo_wetter_mit_Vorhersage,VorUmsatz = fit,UntereGrenzeKonfInt=lwr,ObereGrenzeKonfInt=upr)
+ Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm<- rename(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm,VorUmsatz = fit,UntereGrenzeKonfInt=lwr,ObereGrenzeKonfInt=upr)
 
-anzeige <-dplyr::filter(Vorhersagedaten_kiwo_wetter_mit_Vorhersage,Datum==ymd(20190607))
+anzeige <-dplyr::filter(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm,Datum==ymd(20190607))
 anzeige <-dplyr::select(anzeige, c("Warengruppe","VorUmsatz","UntereGrenzeKonfInt","ObereGrenzeKonfInt"))
 
 
@@ -54,8 +54,11 @@ Die Vorhersage für den ersten Tag (`r ymd(20190607)`) nach Ende der Datenreihe 
 anzeige
 ```
 
+<<<<<<< HEAD
 ```{r}
 install.packages("e1071")
 library("e1071")
 ```
+=======
+>>>>>>> 4b520530a5bb6f268599ce2cb0a2ae5816424c47
 
