@@ -1,6 +1,8 @@
 ---
 title: "Modelle"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 # Beginn ALs Modelle (Nicholas wird die nochmal neu aufziehen)
 
