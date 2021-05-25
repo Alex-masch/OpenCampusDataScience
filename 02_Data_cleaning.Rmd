@@ -19,16 +19,16 @@ plot_missing(umsatzdaten_kiwo_wetter)
 # Analyse der Ausreißer
 
 ```{r Ausreißeranalyse}
-boxplot(umsatzdaten_kiwo_wetter$Temperatur)
-boxplot(umsatzdaten_kiwo_wetter$Bewoelkung)
-boxplot(umsatzdaten_kiwo_wetter$Windgeschwindigkeit)
-# Windgeschwindigkeit hat ein paar Ausreißer, der Rest ok
+ggplot(umsatzdaten_kiwo_wetter) + geom_boxplot(aes(y=Temperatur),outlier.colour="red")+ coord_cartesian(ylim = c(min(umsatzdaten_kiwo_wetter$Temperatur), max(umsatzdaten_kiwo_wetter$Temperatur)))
+ggplot(umsatzdaten_kiwo_wetter) + geom_boxplot(aes(y=Bewoelkung),outlier.colour="red")+ coord_cartesian(ylim = c(min(umsatzdaten_kiwo_wetter$Bewoelkung), max(umsatzdaten_kiwo_wetter$Bewoelkung)))
+ggplot(umsatzdaten_kiwo_wetter) + geom_boxplot(aes(y=Windgeschwindigkeit),outlier.colour="red")+ coord_cartesian(ylim = c(min(umsatzdaten_kiwo_wetter$Windgeschwindigkeit), max(umsatzdaten_kiwo_wetter$Windgeschwindigkeit)))
 
-boxplot(umsatzdaten_kiwo_wetter$Umsatz)
+# Windgeschwindigkeit hat ein paar Ausreißer, der Rest ok
+ggplot(umsatzdaten_kiwo_wetter) + geom_boxplot(aes(y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(umsatzdaten_kiwo_wetter$Umsatz), max(umsatzdaten_kiwo_wetter$Umsatz)))
 #Ups, das sieht nicht gut aus... Probleme
 
 ggplot(umsatzdaten_kiwo_wetter) + 
-geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz))
+geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(umsatzdaten_kiwo_wetter$Umsatz), max(umsatzdaten_kiwo_wetter$Umsatz)))
 
 #Auch auf Ebene der Warengruppen bleiben hier Probleme in der Datenqualität beim Umsatz 
 #TODO Entscheidung für Umgehen mit Ausreißern in Umsatz-Daten treffen

@@ -1,0 +1,162 @@
+---
+title: "Support-Vektor-Machines"
+output: html_document
+---
+# Das ist hier noch ziemlich buggy... 
+
+# Prädiktion 2 (Support Vector Machine)
+
+
+```{r Pakete einbinden, include=FALSE}
+
+library(e1071)
+library(Metrics)
+
+```
+
+Trainings- und Testdatensätze erstellen
+
+```{r}
+
+str(umsatzdaten_kiwo_wetter)
+# Zufallszähler setzen (um die zufällige Partitionierung bei jedem Durchlauf gleich zu halten)
+set.seed(1)
+
+#Datensatzzeilen shuffeln
+new_row_order<-sample(nrow(umsatzdaten_kiwo_wetter))
+umsatzdaten_kiwo_wetter<-umsatzdaten_kiwo_wetter[new_row_order,]
+
+# Zufällige Ziehung von Indizes für die Zeilen des Datensatzes, die dem Traininsdatensatz zugeordnet werden, Umfang: 80%
+indices_train <- sample(seq_len(nrow(umsatzdaten_kiwo_wetter)), size = floor(0.80 * nrow(umsatzdaten_kiwo_wetter)))
+
+# Definition des Trainings- und Testdatensatz durch Selektion bzw. Deselektion der entsprechenden Datenzeilen 
+train_dataset <- umsatzdaten_kiwo_wetter[indices_train, ]
+test_dataset <- umsatzdaten_kiwo_wetter[-indices_train, ]
+
+class(train_dataset$Warengruppe)
+
+
+#Faktoren umkodieren auf Numerisch, damit die SVMs laufen
+
+train_dataset$Warengruppe<-as.numeric(as.integer(train_dataset$Warengruppe))
+train_dataset$Wochentag<-as.numeric(as.integer(train_dataset$Wochentag))
+
+str(train_dataset)
+
+test_dataset$Warengruppe<-as.numeric(as.integer(test_dataset$Warengruppe))
+test_dataset$Wochentag<-as.numeric(as.integer(test_dataset$Wochentag))
+str(test_dataset)
+
+
+Vorhersagedaten_kiwo_wetter_fuerSVM<-Vorhersagedaten_kiwo_wetter
+Vorhersagedaten_kiwo_wetter_fuerSVM$Warengruppe<-as.numeric(as.integer(Vorhersagedaten_kiwo_wetter_fuerSVM$Warengruppe))
+Vorhersagedaten_kiwo_wetter_fuerSVM$Wochentag<-as.numeric(as.integer(Vorhersagedaten_kiwo_wetter_fuerSVM$Wochentag))
+str(Vorhersagedaten_kiwo_wetter_fuerSVM)
+```
+
+SVM Trainieren (ohne Tuning)
+
+```{r}
+# Estimation of an SVM with optimized weighting parameters and given standard hyper parameters
+# Typically not used; instead, the function svm_tune is used in order to also get a model with optimized hyper parameters
+
+plot_missing(train_dataset)
+plot_missing(test_dataset)
+model_svm <- svm(Umsatz ~ Warengruppe+Wochentag, train_dataset)
+summary(model_svm)
+
+
+Vorhersage_svm <-predict(model_svm,test_dataset,na.action = na.pass) #TODO es werden nur für 1646 der ca. 2180 Testdatensätze Vorhersagen geschätzt. Warum? --> Fehlermeldungen
+mape(test_dataset$Umsatz,Vorhersage_svm) #Mean Absolute Percent Error, Fehlermeldung ist Folgefehler
+#rse: sum(error^2)/sum(actual-mean(actual))
+#r^2=1-rse # laut Steffen Brandt. Validieren?
+
+r_squared_svm<-1-rse(test_dataset$Umsatz,Vorhersage_svm) #Fehlermeldung ist Folgefehler der fehlenden Werte
+r_squared_svm 
+
+Vorhersage_svm <- predict(model_svm, Vorhersagedaten_kiwo_wetter_fuerSVM, na.action = na.pass) #TODO gibt ebenfalls nur 6 Werte aus, warum? 
+Vorhersage_svm
+
+Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM <- dplyr::bind_cols(Vorhersagedaten_kiwo_wetter_fuerSVM, as.data.frame(Vorhersage_svm ))
+
+
+Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM<- rename(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM,VorUmsatz_SVM = Vorhersage_svm)
+
+
+Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM$Wochentag <- factor(weekdays(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM$Datum),
+levels=ordentlicheWoche)
+
+
+Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM$Warengruppe <- factor(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM$Warengruppe,
+levels = c(1,2,3,4,5,6),
+labels = c("Brot", "Broetchen", "Croissant","Konditorei","Kuchen","Saisonbrote"))
+
+anzeige <-dplyr::filter(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM,Datum==ymd(20190607))
+anzeige <-dplyr::select(anzeige, c("Warengruppe","VorUmsatz_SVM"))
+
+```
+
+
+
+Die Vorhersage für den ersten Tag (`r ymd(20190607)`) nach Ende der Datenreihe ist:
+
+```{r echo=FALSE}
+anzeige
+```
+
+
+
+
+SVM Trainieren (mit Tuning)
+
+```{r}
+
+
+
+# Estimation of various SVM (each with optimized weighting parameters) using systematically varied hyper parameters (typically called 'grid search' approach) and cross validation
+# the resulting object includes the optimal model in the element named 'best.model'
+
+svm_tune <- tune(svm, Umsatz ~ Warengruppe + Wochentag, data=train_dataset,ranges = list(epsilon = seq(0.2,1,0.1), cost = 2^(2:3))) #TODO wirft noch Fehler. Warum? Irgendwie inkompatible Faktor-Längen?
+summary(svm_tune)
+
+
+
+
+
+Vorhersage_svmtune <-predict(svm_tune$best.model,test_dataset,na.action = na.pass)
+mape(test_dataset$Umsatz,Vorhersage_svmtune) #Mean Absolute Percent Error
+
+
+r_squared_svmtune<-1-rse(test_dataset$Umsatz,Vorhersage_svmtune)
+r_squared_svmtune#seltsam, warum negativ?
+
+Vorhersage_svmtune <- predict(svm_tune$best.model, Vorhersagedaten_kiwo_wetter_fuerSVM,na.action = na.pass) #TODO gibt nur 6 Werte aus, warum? Hier noch falsch
+Vorhersage_svmtune
+
+Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVMtune <- dplyr::bind_cols(Vorhersagedaten_kiwo_wetter_fuerSVM, as.data.frame(Vorhersage_svmtune ))
+
+
+Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVMtune<- rename(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVMtune,VorUmsatz_SVMtune = Vorhersage_svmtune)
+
+
+Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVMtune$Wochentag <- factor(weekdays(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVMtune$Datum),
+levels=ordentlicheWoche)
+
+
+Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVMtune$Warengruppe <- factor(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVMtune$Warengruppe,
+levels = c(1,2,3,4,5,6),
+labels = c("Brot", "Broetchen", "Croissant","Konditorei","Kuchen","Saisonbrote"))
+
+anzeige <-dplyr::filter(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVMtune,Datum==ymd(20190607))
+anzeige <-dplyr::select(anzeige, c("Warengruppe","VorUmsatz_SVMtune"))
+
+```
+
+
+
+Die Vorhersage für den ersten Tag (`r ymd(20190607)`) nach Ende der Datenreihe ist:
+
+```{r echo=FALSE}
+anzeige
+```
+

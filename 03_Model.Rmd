@@ -2,11 +2,13 @@
 title: "Modelle"
 output: html_document
 ---
+
 # Beginn ALs Modelle (Nicholas wird die nochmal neu aufziehen)
 
 ```{r stepwise Regression, nutzt Modell-Syntax,}
 #data<-read_csv(file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
 data<-umsatzdaten_kiwo_wetter
+
 #Multiple linear regression Umsatz vorhergesagt durch Temperatur und KielerWoche
 #definiere Model
 M1<-Umsatz ~ Temperatur+KielerWoche
@@ -55,6 +57,13 @@ anova(model_M1,model_M2,model_M3, model_M4)
 #Modellvergleich 5-6
 anova(model_M5, model_M6)
 #M6 nochmal besser als M5
+
+Mfinal<-Umsatz ~ as.factor(Warengruppe) + Wochentag + Temperatur + KielerWoche + 
+    Bewoelkung + Windgeschwindigkeit
+model_final <- lm(Mfinal,data,na.action=na.exclude)
+summary(model_final)
+
+
 
 ```
 
