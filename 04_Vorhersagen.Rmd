@@ -39,10 +39,10 @@ Vorhersage_lm <- predict(object=model_final, newdata = Vorhersagedaten_kiwo_wett
 Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm <- dplyr::bind_cols(Vorhersagedaten_kiwo_wetter, as.data.frame(Vorhersage_lm)) #in dieser Datei sind "fit" die Umsatz-Prädiktionen für die jeweiligen Datenpunkte, lwr und upr sind die Grenzen der Konfidenzintervalle
 
 
- Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm<- rename(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm,VorUmsatz = fit,UntereGrenzeKonfInt=lwr,ObereGrenzeKonfInt=upr)
+ Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm<- rename(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm,VorUmsatz_LM = fit,UntereGrenzeKonfInt=lwr,ObereGrenzeKonfInt=upr)
 
 anzeige <-dplyr::filter(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm,Datum==ymd(20190607))
-anzeige <-dplyr::select(anzeige, c("Warengruppe","VorUmsatz","UntereGrenzeKonfInt","ObereGrenzeKonfInt"))
+anzeige <-dplyr::select(anzeige, c("Warengruppe","VorUmsatz_LM","UntereGrenzeKonfInt","ObereGrenzeKonfInt"))
 
 
 ```
