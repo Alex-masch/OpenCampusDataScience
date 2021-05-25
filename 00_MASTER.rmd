@@ -57,3 +57,10 @@ Hier wird 04_Vorhersagen.rmd eingebunden
 ```{r, child='04_Vorhersagen.rmd'}
 
 ```
+
+
+Hier wird 05_SVM.rmd eingebunden
+
+```{r, child='05_SVM.rmd'}
+
+```

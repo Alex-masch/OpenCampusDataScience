@@ -27,7 +27,7 @@ new_row_order<-sample(nrow(umsatzdaten_kiwo_wetter))
 umsatzdaten_kiwo_wetter<-umsatzdaten_kiwo_wetter[new_row_order,]
 
 # Zufällige Ziehung von Indizes für die Zeilen des Datensatzes, die dem Traininsdatensatz zugeordnet werden, Umfang: 80%
-indices_train <- sample(seq_len(nrow(umsatzdaten_kiwo_wetter)), size = floor(0.20 * nrow(umsatzdaten_kiwo_wetter)))
+indices_train <- sample(seq_len(nrow(umsatzdaten_kiwo_wetter)), size = floor(0.80 * nrow(umsatzdaten_kiwo_wetter)))
 
 # Definition des Trainings- und Testdatensatz durch Selektion bzw. Deselektion der entsprechenden Datenzeilen 
 train_dataset <- umsatzdaten_kiwo_wetter[indices_train, ]
