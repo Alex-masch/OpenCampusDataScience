@@ -62,8 +62,24 @@ feiertage_neu <- feiertage13_14_15_16_17_18_19_tbl %>%
 ```
 
 
+Anmerkung AL: der folgende Move schreibt in dei Variablen NA als Wert, setzt sie aber nicht auf fehlend, deswegen auskommentiert
+
 ```{r}
 # Fehlende Werte "" = Leerzeichen und "NULL" durch "NA" in Datensatz ersetzt
-feiertage_neu$Datum[feiertage_neu$Datum == ""] <-NA
-feiertage_neu$Datum[feiertage_neu$Datum == "NULL"] <-NA
+
+#feiertage_neu$Datum[feiertage_neu$Datum == ""] <-NA
+#feiertage_neu$Datum[feiertage_neu$Datum == "NULL"] <-NA
+
 ```
+Alternative AL:
+
+* Konvertiere die Strings gleich in Daten... und dabei wird alles auf missings (NA) gesetzt, was kein Datum ist. Filtere dann so, dass die Fälle mit leeren Datumsangaben rausfallen
+
+```{r Daten als Daten lesen}
+
+feiertage_neu$Datum<- ymd(feiertage_neu$Datum)
+feiertage_neu<- feiertage_neu%>%
+  filter(!is.na(Datum))
+feiertage_neu$istFeiertag<-1
+```
+

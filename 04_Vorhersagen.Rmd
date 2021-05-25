@@ -31,7 +31,7 @@ names(Vorhersagedaten_kiwo_wetter)
 Vorhersagedaten_kiwo_wetter$KielerWoche[is.na(Vorhersagedaten_kiwo_wetter$KielerWoche)] <- 0
 
 #Vorhersage berechnen
-Vorhersage_lm <- predict(object=model_M4, newdata = Vorhersagedaten_kiwo_wetter, type = "response", interval = "confidence", na.action = na.exclude)
+Vorhersage_lm <- predict(object=model_final, newdata = Vorhersagedaten_kiwo_wetter, type = "response", interval = "confidence", na.action = na.exclude)
 
 #print(Vorhersage)
 #class(Vorhersage)#is ne doofe Matrix--> für Nutzung von dplyr-Routinen as.data.frame()
@@ -54,11 +54,5 @@ Die Vorhersage für den ersten Tag (`r ymd(20190607)`) nach Ende der Datenreihe 
 anzeige
 ```
 
-<<<<<<< HEAD
-```{r}
-install.packages("e1071")
-library("e1071")
-```
-=======
->>>>>>> 4b520530a5bb6f268599ce2cb0a2ae5816424c47
+
 
