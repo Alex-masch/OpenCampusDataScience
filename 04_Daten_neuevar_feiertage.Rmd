@@ -67,3 +67,10 @@ feiertage_neu <- feiertage13_14_15_16_17_18_19_tbl %>%
 feiertage_neu$Datum[feiertage_neu$Datum == ""] <-NA
 feiertage_neu$Datum[feiertage_neu$Datum == "NULL"] <-NA
 ```
+
+```{r}
+#In Datensatz schreiben als csv
+feiertage_neu <- apply(feiertage_neu, 2, as.character)
+write.csv(feiertage_neu, 'feiertage.csv', row.names = TRUE)
+```
+
