@@ -1,0 +1,46 @@
+---
+title: "Gruppe 4 - Final"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r Setup, include=FALSE}
+knitr::opts_chunk$set(echo = T) #Der Code in den Chunks soll im Output stehen
+```
+
+```{r benötigte Pakete laden, include=FALSE}
+
+# Einbinden benötigter Bibliotheken und Funktionen
+library(tidyverse) #Daten manipulieren (lädt eine Reihe andere Pakete, z.B. readr, dplyr, ggplot2) 
+
+
+library(psych) #Statistische Methoden
+
+library(lubridate) #Umgang mit Kalender-Daten
+
+#die folgenden Pakete sind beim Daten Explorieren sehr hilfreich... und vermutlich nicht vorinstalliert bei Euch
+
+library(skimr)
+library(DataExplorer)
+#library(car) 
+
+```
+
+```{r, child='1_Daten.rmd'}
+
+```
+
+```{r, child='2_LM.rmd'}
+
+```
+
+```{r, child='3_SVM.rmd'}
+
+```
+
+# Hier dann noch die Neuronalen Netze etc. einfügen
+
+```{r, child='9_Zusammenfassung.rmd'}
+
+```

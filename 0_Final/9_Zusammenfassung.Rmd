@@ -1,0 +1,19 @@
+
+# Grafischer Vergleich der Vorhersagen
+
+
+```{r , echo=F}
+
+
+all_predictions <- full_join(select(pred_lm, 1:9), select(pred_svm,c("Datum", "Warengruppe","Prediction_Umsatz_SVM")), by=c("Datum","Warengruppe"))
+
+all_predictions <- full_join(all_predictions, select(pred_svmtune,c("Datum", "Warengruppe","Prediction_Umsatz_SVMtune")), by=c("Datum","Warengruppe"))
+
+all_predictions
+
+ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_LM, y=Prediction_Umsatz_SVM))
+ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_LM, y=Prediction_Umsatz_SVMtune))
+
+ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_SVM, y=Prediction_Umsatz_SVMtune))
+```
+

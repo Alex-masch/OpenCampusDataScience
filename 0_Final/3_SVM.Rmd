@@ -1,0 +1,140 @@
+
+```{r, include=FALSE}
+
+library(e1071)
+library(Metrics)
+
+```
+
+
+# Support Vector Maschinen
+
+
+## Trainings- und Testdatensätze erstellen
+**Achtung: Im Moment auf 10% Trainingsdaten, wegen Performanz! Am Ende wieder anpassen**
+
+```{r}
+data<-data2
+
+# Zufallszähler setzen (um die zufällige Partitionierung bei jedem Durchlauf gleich zu halten)
+set.seed(1)
+
+#Datensatzzeilen shuffeln
+new_row_order<-sample(nrow(data))
+data<-data[new_row_order,]
+
+# Zufällige Ziehung von Indizes für die Zeilen des Datensatzes, die dem Traininsdatensatz zugeordnet werden, Umfang: 80% (im Moment 10%)
+indices_train <- sample(seq_len(nrow(data)), size = floor(0.10 * nrow(data)))
+
+# Definition des Trainings- und Testdatensatz durch Selektion bzw. Deselektion der entsprechenden Datenzeilen 
+train_data <- data[indices_train, ]
+test_data <- data[-indices_train, ]
+
+
+```
+
+## SVM Trainieren (ohne Tuning)
+
+```{r}
+model_svm <- svm(Umsatz ~ Warengruppe+Wochentag, train_data)
+summary(model_svm)
+```
+
+## Kreuzvalidierung 
+
+```{r}
+test_data_svm <-predict(model_svm,test_data,na.action = na.pass) 
+mape(test_data$Umsatz,test_data_svm) #Mean Absolute Percent Error, 
+#rse: sum(error^2)/sum(actual-mean(actual))
+#r^2=1-rse #laut Steffen Brandt
+
+r_squared_svm<-1-rse(test_data$Umsatz,test_data_svm)
+r_squared_svm 
+```
+
+##Prädiktion 2 (SVM ohne Tuning)
+
+```{r}
+
+pred_svm <- predict(model_svm, pred_data2, na.action = na.pass)# Daten Vorhersagen
+
+pred_svm  <- dplyr::bind_cols(pred_data2, as.data.frame(pred_svm  )) #zusammenfügen
+
+pred_svm<- rename(pred_svm,Prediction_Umsatz_SVM = pred_svm)#Variablenbenennung anpassen
+
+#Faktoren wieder schick machen
+pred_svm$Wochentag <- factor(weekdays(pred_svm$Datum),
+levels=ordentlicheWoche)
+pred_svm$Warengruppe <- factor(pred_svm$Warengruppe,
+levels = c(1,2,3,4,5,6),
+labels = c("Brot", "Broetchen", "Croissant","Konditorei","Kuchen","Saisonbrote"))
+
+
+anzeige <-dplyr::filter(pred_svm,Datum==ymd(20190607))
+anzeige <-dplyr::select(anzeige, c("Warengruppe","Prediction_Umsatz_SVM"))
+
+pred_svm
+```
+
+[**Die Vorhersage für den ersten Tag (`r ymd(20190607)`) nach Ende der Datenreihe ist:**]{style="color: red;"}
+
+```{r echo=FALSE}
+anzeige
+
+rm(anzeige, data, indices_train, new_row_order, test_data_svm)
+```
+
+
+## SVM Trainieren (mit Tuning)
+```{r}
+svm_tune <- tune(svm, Umsatz ~ Warengruppe + Wochentag, data=train_data,ranges = list(epsilon = seq(0.2,1,0.1), cost = 2^(2:3))) 
+summary(svm_tune)
+
+```
+
+## Kreuzvalidierung
+```{r}
+test_data_svm<-predict(svm_tune$best.model,test_data,na.action = na.pass)
+mape(test_data$Umsatz,test_data_svm) #Mean Absolute Percent Error
+
+
+r_squared_svmtune<-1-rse(test_data$Umsatz,test_data_svm)
+r_squared_svmtune
+```
+
+## Prädiktion 3 (SVM mit Tuning)
+
+
+```{r}
+
+
+pred_svmtune <- predict(svm_tune$best.model, pred_data2, na.action = na.pass)# Daten Vorhersagen
+
+pred_svmtune  <- dplyr::bind_cols(pred_data2, as.data.frame(pred_svmtune)) #zusammenfügen
+
+pred_svmtune<- rename(pred_svmtune,Prediction_Umsatz_SVMtune = pred_svmtune)#Variablenbenennung anpassen
+
+#Faktoren wieder schick machen
+pred_svmtune$Wochentag <- factor(weekdays(pred_svmtune$Datum),
+levels=ordentlicheWoche)
+pred_svmtune$Warengruppe <- factor(pred_svmtune$Warengruppe,
+levels = c(1,2,3,4,5,6),
+labels = c("Brot", "Broetchen", "Croissant","Konditorei","Kuchen","Saisonbrote"))
+
+
+anzeige <-dplyr::filter(pred_svmtune,Datum==ymd(20190607))
+anzeige <-dplyr::select(anzeige, c("Warengruppe","Prediction_Umsatz_SVMtune"))
+
+pred_svmtune
+
+```
+
+
+[**Die Vorhersage für den ersten Tag (`r ymd(20190607)`) nach Ende der Datenreihe ist:**]{style="color: red;"}
+
+
+```{r echo=FALSE}
+anzeige
+
+rm(anzeige, indices_train, new_row_order, test_data_svm)
+```

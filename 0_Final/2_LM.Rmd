@@ -1,0 +1,92 @@
+```{r , include=FALSE}
+library(jtools)
+```
+
+
+# Lineare Modelle/Supervised Learning
+
+## Optimierung des Modells mit schrittweiser Aufnahme von Variablen
+
+```{r, echo=F}
+data<-data1
+
+M1<-Umsatz ~ Warengruppe
+LM1 <- lm(M1,data,na.action=na.exclude)
+#summary(LM1)
+#0.645
+
+M2<-update(M1,.~.+Wochentag)
+LM2 <- lm(M2,data,na.action=na.exclude)
+#summary(LM2)
+#0.673
+
+M3<-update(M2,.~.+istFeiertag)
+LM3 <- lm(M3,data,na.action=na.exclude)
+#summary(LM3)
+#0.673
+
+M4<-update(M3,.~.+Temperatur)
+LM4 <- lm(M4,data,na.action=na.exclude)
+#summary(LM4)
+#0.7126
+
+M5<-update(M4,.~.+KielerWoche)
+LM5 <- lm(M5,data,na.action=na.exclude)
+#summary(LM5)
+#0.7128
+
+M6<-update(M5,.~.+Windgeschwindigkeit)
+LM6 <- lm(M6,data,na.action=na.exclude)
+#summary(LM6)
+#0.7128
+
+M7<-update(M6,.~.+Bewoelkung)
+LM7 <- lm(M7,data,na.action=na.exclude)
+#summary(LM7)
+
+jtools::export_summs(LM1,LM2,LM3,LM4,LM5, LM6, LM7)
+
+anova(LM1,LM2,LM3,LM4,LM5, LM6, LM7)
+
+
+
+```
+
+Entscheidung für das Modell 6 **Umsatz ~ Warengruppe + Wochentag + istFeiertag + Temperatur + 
+    KielerWoche + Windgeschwindigkeit**   mit 0,715  Varianzaufklärung
+
+```{r, echo=F}
+
+LMfinal<-LM6
+summ(LMfinal)
+rm(M1,M2,M3,M4,M5,M6,M7,LM1,LM2,LM3,LM4,LM5, LM6,LM7)
+```
+
+## Prädiktion 1 (Lineare Modelle/Supervised Learning)
+
+aka: Ich nehme ein lineares Modell, das auf einen Datensatz gefittet wurde und sage mit den dort geschätzten Koeffizienten die Zielvariable auf Basis von einem neuen Datensatz vorher
+
+```{r Prädiktion Umsätze 7.6.2019 (Freitag, erster Tag nach Ende der Umsatzdaten) und 09.6.2019 (sonntag darauf) und zum Kontrast ein stürmischer kalter Mittwoch im Januar auf Basis des Modells 4}
+#Vorhersage berechnen
+pred_lm <- predict(object=LMfinal, newdata = pred_data1, type = "response", interval = "confidence", na.action = na.exclude)
+
+#print(pred_lm)
+#class(pred_lm)#is ne doofe Matrix--> für Nutzung von dplyr-Routinen as.data.frame()
+
+pred_lm <- dplyr::bind_cols(pred_data1, as.data.frame(pred_lm)) #in dieser Datei sind "fit" die Umsatz-Prädiktionen für die jeweiligen Datenpunkte, lwr und upr sind die Grenzen der Konfidenzintervalle
+
+
+pred_lm<- rename(pred_lm,Prediction_Umsatz_LM = fit,UntereGrenzeKonfInt=lwr,ObereGrenzeKonfInt=upr)
+
+anzeige <-dplyr::filter(pred_lm,Datum==ymd(20190607))
+anzeige <-dplyr::select(anzeige, c("Warengruppe","Prediction_Umsatz_LM","UntereGrenzeKonfInt","ObereGrenzeKonfInt"))
+pred_lm
+```
+
+[**Die Vorhersage für den ersten Tag (`r ymd(20190607)`) nach Ende der Datenreihe ist:**]{style="color: red;"}
+
+```{r echo=FALSE}
+anzeige
+
+rm(anzeige, data)
+```

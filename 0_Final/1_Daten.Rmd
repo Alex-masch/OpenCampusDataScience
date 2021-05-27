@@ -1,0 +1,283 @@
+# Daten einlesen
+
+## Bereitgestellte Daten einlesen (im Hintergrund)
+
+```{r Daten einlesen, include=F, message=F}
+# Einlesen der Umsatzdaten
+umsatzdaten <- read_csv(file.path('Daten','umsatzdaten_gekuerzt.csv',fsep = .Platform$file.sep))
+# Erstellung der Variable mit dem Wochentag
+
+ordentlicheWoche <- c('Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag')
+umsatzdaten$Wochentag <- factor(weekdays(umsatzdaten$Datum),
+levels=ordentlicheWoche)
+
+Warengruppen = c("Brot", "Broetchen", "Croissant","Konditorei","Kuchen","Saisonbrote")
+
+umsatzdaten$Warengruppe <- factor(umsatzdaten$Warengruppe,
+levels = c(1,2,3,4,5,6),
+labels = Warengruppen)
+
+kiwo <- read_csv(file.path('Daten','kiwo.csv',fsep = .Platform$file.sep))
+wetter <- read_csv(file.path('Daten','wetter.csv',fsep = .Platform$file.sep))
+
+
+
+```
+
+```{r Charakteristika der Datensätze anzeigen lassen, include=F}
+#Anzeigen, welche Variablen in den Datensätzen sind (ohne weitere Information , nur Name) 
+#Mehr Informationen zu den Datensätzen anzeigen
+#Erscheint aktuell nicht in der finalen Ausgabe
+skim(umsatzdaten)
+skim(wetter)
+skim(kiwo)
+
+
+#Beobachtung: Bewoelkung hat fehlende Werte.
+
+```
+
+## Feiertagsdaten aus dem Netz holen (im Hintergrund)
+
+```{r Feiertage einlesen, include=F}
+# Einlesen der Feiertage
+
+library(jsonlite)
+
+# url mit den Kalenderdaten zu Feiertagen
+url1 <- "https://feiertage-api.de/api/?jahr=2013&nur_land=SH"
+url2 <- "https://feiertage-api.de/api/?jahr=2014&nur_land=SH"
+url3 <- "https://feiertage-api.de/api/?jahr=2015&nur_land=SH"
+url4 <- "https://feiertage-api.de/api/?jahr=2016&nur_land=SH"
+url5 <- "https://feiertage-api.de/api/?jahr=2017&nur_land=SH"
+url6 <- "https://feiertage-api.de/api/?jahr=2018&nur_land=SH"
+url7 <- "https://feiertage-api.de/api/?jahr=2019&nur_land=SH"
+
+# url lesen und data.frame erzeugen
+feiertage13 <- fromJSON(txt=url1)
+feiertage14 <- fromJSON(txt=url2)
+feiertage15 <- fromJSON(txt=url3)
+feiertage16 <- fromJSON(txt=url4)
+feiertage17 <- fromJSON(txt=url5)
+feiertage18 <- fromJSON(txt=url6)
+feiertage19 <- fromJSON(txt=url7)
+
+feiertage13_tbl <- as_data_frame(feiertage13) #data frame erzeugen
+feiertage14_tbl <- as_data_frame(feiertage14) #data frame erzeugen
+feiertage15_tbl <- as_data_frame(feiertage15) #data frame erzeugen
+feiertage16_tbl <- as_data_frame(feiertage16) #data frame erzeugen
+feiertage17_tbl <- as_data_frame(feiertage17) #data frame erzeugen
+feiertage18_tbl <- as_data_frame(feiertage18) #data frame erzeugen
+feiertage19_tbl <- as_data_frame(feiertage19) #data frame erzeugen
+
+#führt die Datentabellen zusammen
+feiertage13_14_tbl<-full_join(feiertage13_tbl, feiertage14_tbl) 
+feiertage13_14_15_tbl<-full_join(feiertage13_14_tbl, feiertage15_tbl)
+feiertage13_14_15_16_tbl<-full_join(feiertage13_14_15_tbl, feiertage16_tbl)
+feiertage13_14_15_16_17_tbl<-full_join(feiertage13_14_15_16_tbl, 
+                                       feiertage17_tbl)
+feiertage13_14_15_16_17_18_tbl<-full_join(feiertage13_14_15_16_17_tbl, 
+                                          feiertage18_tbl)
+feiertage13_14_15_16_17_18_19_tbl<-full_join(feiertage13_14_15_16_17_18_tbl, 
+                                             feiertage19_tbl)
+
+# Datensatz umstrukturiert von "wide" mit mehreren Spalten auf "long", um die Daten konform zu unseren anderen Daten zu strukturieren. Umformung mit tidyverse-package. Zur Übergabe des Ergebnisses neue Variable feiertage_neu geschrieben
+
+feiertage <- feiertage13_14_15_16_17_18_19_tbl %>%
+  pivot_longer(everything(), names_to = "Feiertage", values_to = "Datum")
+
+
+feiertage$Datum<- ymd(feiertage$Datum) #strings als Datum interpretieren
+feiertage<- feiertage%>% 
+  filter(!is.na(Datum)) #wo kein Datum produziert wurde oder eh missings auftreten Zeile löschen (es gab da komische leere Zellen beim Einlesen, die werden hier rausgeworfen)
+
+feiertage$istFeiertag<-1 #dichotome Variable als Index: ist ein Feiertag? ---> setzen
+
+write.csv(feiertage, file.path('Daten','feiertage.csv',fsep = .Platform$file.sep), row.names = TRUE) #sichere den Datensatz
+
+
+rm(feiertage13_14_15_16_17_18_19_tbl,feiertage13_14_15_16_17_18_tbl,feiertage13_14_15_16_17_tbl,feiertage13_14_15_16_tbl,feiertage13_14_15_tbl,feiertage13_14_tbl,url1, url2, url3, url4, url5, url6, url7, feiertage13, feiertage14, feiertage15, feiertage16, feiertage17, feiertage18, feiertage19, feiertage13_tbl, feiertage14_tbl, feiertage15_tbl, feiertage16_tbl, feiertage17_tbl, feiertage18_tbl, feiertage19_tbl) #aufräumen
+```
+
+## Daten zusammenfügen
+
+```{r Joine kiwo-daten an Umsatzdaten und Wetter-Daten an Umsatzdaten, include=F}
+dataset<-left_join(umsatzdaten,kiwo, by="Datum")
+dataset<-left_join(dataset , wetter, by="Datum")
+dataset<-left_join(dataset , feiertage, by="Datum")
+
+
+write.csv(dataset,file.path('Daten','umsatzdaten_kiwo_wetter_feiertage.csv',fsep = .Platform$file.sep))
+
+
+
+```
+
+
+```{r, echo=F}
+dataset
+```
+
+
+# Datenaufbereitung
+
+## Datenstruktur untersuchen
+
+```{r Datenstruktur anschauen, echo=F}
+
+skim(dataset)
+
+
+# Wir haben 10899 Umsatzdatensätze von 2121 Tagen. Wir bekommen durch fehlende Wetterdaten (besonders: 669 fehlende Wettercodes) insgesamt 2602 Datensätze ohne Wettercode--> Wenn wir also alle Datensätze fallen lassen, die hier fehlende Daten haben, reduzieren wir die Datenbasis erheblich
+
+plot_missing(dataset)
+
+```
+
+## Analyse der Ausreißer in den metrischen Variablen
+
+-   Temperatur: keine
+
+-   Bewoelkung: keine
+
+-   Windgeschwindigkeit: Ausreißer
+
+-   Umsatz: Ausreißer
+
+-   Umsatz nach Warengruppen: Ausreißer
+
+
+
+```{r Ausreißeranalyse, echo=F, message=F,error=FALSE}
+ggplot(dataset) + geom_boxplot(aes(y=Temperatur),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Temperatur), max(dataset$Temperatur)))
+ggplot(dataset) + geom_boxplot(aes(y=Bewoelkung),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Bewoelkung), max(dataset$Bewoelkung)))
+ggplot(dataset) + geom_boxplot(aes(y=Windgeschwindigkeit),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Windgeschwindigkeit), max(dataset$Windgeschwindigkeit)))
+
+# Windgeschwindigkeit hat ein paar Ausreißer, der Rest ok
+ggplot(dataset) + geom_boxplot(aes(y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Umsatz), max(dataset$Umsatz)))
+#Ups, das sieht nicht gut aus... Probleme
+
+ggplot(dataset) + 
+geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Umsatz), max(dataset$Umsatz)))
+
+#Auch auf Ebene der Warengruppen bleiben hier Probleme in der Datenqualität beim Umsatz 
+#TODO Entscheidung für Umgehen mit Ausreißern in Umsatz-Daten treffen
+```
+
+-   Test auf Unterschiede der Mittelwerte im Umsatz per Warengruppen, um ggf. Warengruppen zusammenzufassen: nicht zu empfehlen, alle Unterschiede sig. von 0 verschieden
+
+```{r Unterschiede Umsatz Warengruppen, echo=F}
+#teste, ob man bestimmte Warengruppe zusammenfassen kann
+#Mittelwertsunterschiede im Umsatz pro Gruppe
+diff<-aov(Umsatz~Warengruppe, data=dataset)
+TukeyHSD(diff)
+rm(diff)
+#Interpretation: Alle Unterschiede sig., entsprechend macht es keinen Sinn, Warengruppen zusammenzufassen.
+```
+
+
+
+
+## Datenaufbereitung: Fehlende Werte imputieren
+
+- KielerWoche und istFeiertage dichotom (0 wenn nicht zutreffend)
+
+- Bewoelkung, Temperatur und Windgeschwindigkeit mittlere Werte imputieren
+
+```{r Vorschlag cleaning, include=F}
+#ergänze die fehlenden 0-er
+
+dataset$KielerWoche[is.na(dataset$KielerWoche)] <- 0
+dataset$Feiertage[is.na(dataset$Feiertage)] <- 0
+dataset$istFeiertag[is.na(dataset$istFeiertag)] <- 0
+
+#Bewoelkung-Variable NAs auf mean(Bewoelkung) kodieren (mittlere Werte im Datensatz), denn: es sind nur 10 Datensätze, die das betrifft und in diesen Fällen gibt es keinen klaren Temperaturtrend
+
+dataset$Bewoelkung[is.na(dataset$Bewoelkung)] <- mean(dataset$Bewoelkung, na.rm=TRUE)
+dataset$Temperatur[is.na(dataset$Temperatur)] <- mean(dataset$Temperatur, na.rm=TRUE)
+dataset$Windgeschwindigkeit[is.na(dataset$Windgeschwindigkeit)] <- mean(dataset$Windgeschwindigkeit, na.rm=TRUE)
+
+
+
+write.csv(dataset,file.path('Daten','umsatzdaten_kiwo_wetter_feiertage_imputiert.csv',fsep = .Platform$file.sep))
+
+```
+```{r, echo=F}
+skim(dataset)#Datenstruktur nochmal prüfen
+plot_missing(dataset)
+```
+
+
+# Datensets für Modellierungen bereitstellen
+
+## Trainingsdatensätze erstellen
+- data1 : Faktoren bei Warengruppe und Wochentag bleiben erhalten, Variablen Wettercode und (Bezeichnung der) Feiertage raus
+- data2 : Wie data1, aber alle Variablen numerisch
+
+
+```{r Datensets vorbereiten, include=F}
+
+data1 <- select(dataset,-c("Wettercode", "Feiertage"))
+data2 <- data1
+#Faktoren umkodieren auf numerisch, damit die SVMs laufen
+
+data2$Warengruppe<-as.numeric(as.integer(data2$Warengruppe))
+data2$Wochentag<-as.numeric(as.integer(data2$Wochentag))
+
+
+```
+
+```{r}
+str(data1)
+str(data2)
+```
+
+
+## Vorhersagedatensatz mit gleicher Struktur erzeugen
+
+Prädiktion wird vorbereitet für Umsätze 7.6.2019 (Freitag, erster Tag nach Ende der Umsatzdaten) und 09.6.2019 (Sonntag darauf) und zum Kontrast ein stürmischer kalter Mittwoch im Januar 09.01.2019
+
+- pred_data1: Passend zu data1 mit Faktorenstrukturen
+- pred_data2: Passend zu data2 mit nur numerischen Variablen
+
+```{r , include=F}
+
+#wir basteln uns den Vorhersagedatensatz in der selben Form wie der Vorhersagedatensatz
+pred_data1<-data.frame(Datum=c(ymd(20190607),ymd(20190609),ymd(20190109)))#hier für drei Tage
+Warengruppendaten<-data.frame(Warengruppe=c(1:6))
+pred_data1 <-dplyr::full_join(Warengruppendaten,pred_data1,by = character())
+
+pred_data1$Warengruppe <- factor(pred_data1$Warengruppe,
+levels = c(1,2,3,4,5,6), labels=Warengruppen)
+
+pred_data1$Wochentag <- factor(weekdays(pred_data1$Datum),
+levels=ordentlicheWoche)
+
+pred_data1<-left_join(pred_data1,kiwo, by="Datum")
+pred_data1<-left_join(pred_data1, wetter, by="Datum")
+pred_data1<-left_join(pred_data1, feiertage, by="Datum")
+
+pred_data1$KielerWoche[is.na(pred_data1$KielerWoche)] <- 0
+pred_data1$Feiertage[is.na(pred_data1$Feiertage)] <- 0
+pred_data1$istFeiertag[is.na(pred_data1$istFeiertag)] <- 0
+
+str(pred_data1)
+
+
+
+pred_data1 <- select(pred_data1,-c("Wettercode", "Feiertage"))
+pred_data2 <- pred_data1
+#Faktoren umkodieren auf numerisch, damit die SVMs laufen
+
+pred_data2$Warengruppe<-as.numeric(as.integer(pred_data2$Warengruppe))
+pred_data2$Wochentag<-as.numeric(as.integer(pred_data2$Wochentag))
+
+
+rm(umsatzdaten, kiwo,feiertage,wetter,  Warengruppendaten) #aufräumen
+```
+
+```{r}
+str(pred_data1)
+str(pred_data2)
+```
+
