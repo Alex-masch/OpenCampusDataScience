@@ -82,12 +82,17 @@ feiertage_neu<- feiertage_neu%>%
   filter(!is.na(Datum))
 feiertage_neu$istFeiertag<-1
 ```
+```{r}
+# Selektiere Spalten Datum und IstFeiertag
+
+feiertage<-feiertage_neu %>%
+  select (Datum, istFeiertag)
+```
 
 <<<<<<< HEAD
 ```{r}
 #In Datensatz schreiben als csv
-feiertage_neu <- apply(feiertage_neu, 2, as.character)
-write.csv(feiertage_neu, 'feiertage.csv', row.names = TRUE)
+write.csv(feiertage, 'feiertage.csv', row.names = TRUE)
 ```
 
 =======
