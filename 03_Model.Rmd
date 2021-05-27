@@ -1,13 +1,16 @@
 ---
 title: "Modelle"
-output: html_document
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
 ---
 
 # Beginn ALs Modelle (Nicholas wird die nochmal neu aufziehen)
 
 ```{r stepwise Regression, nutzt Modell-Syntax,}
-#data<-read_csv(file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
-data<-umsatzdaten_kiwo_wetter
+#data<-read_csv(file.path('Daten','umsatzdaten_kiwo_wetter_feiertage.csv',fsep = .Platform$file.sep))
+data<-umsatzdaten_kiwo_wetter_feiertage
 
 #Multiple linear regression Umsatz vorhergesagt durch Temperatur und KielerWoche
 #definiere Model
@@ -49,6 +52,12 @@ M6<-update(M5,.~.+Windgeschwindigkeit)
 model_M6 <- lm(M6,data,na.action=na.exclude)
 summary(model_M6)
 #Interpretation: sig. Einfluss über Wettercodes hinaus, und zwar positiv, kaum Veränderung in Varianzaufklärung
+
+#Aufnahme Feiertage (erzeugt bei mir einen contrast-Fehler. Weil Feiertage nur zwei Werte hat und deshalb kaum Vorhersage-Qualität?)
+#M7<-update(M6,.~.+istFeiertag)
+#model_M7 <- lm(M7,data,na.action=na.exclude)
+#summary(model_M7)
+#Interpretation: 
 
 #Modellvergleiche 1-4 (5 und 6 geht nicht in den Vergleich ein, weil es auf weniger Datenpunkten beruht)
 anova(model_M1,model_M2,model_M3, model_M4)
