@@ -3,7 +3,6 @@ title: "Gruppe 4"
 output: html_document
 ---
 
-
 ```{r Setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE) #Der Code in den Chunks soll im Output stehen
 ```

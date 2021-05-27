@@ -61,9 +61,11 @@ umsatzdaten_kiwo<-left_join(umsatzdaten,kiwo, by="Datum")
 #names(umsatzdaten_kiwo)
 umsatzdaten_kiwo_wetter<-left_join(umsatzdaten_kiwo , wetter, by="Datum")
 #names(umsatzdaten_kiwo_wetter)
+umsatzdaten_kiwo_wetter_feiertage<-left_join(umsatzdaten_kiwo_wetter , feiertage, by="Datum")
+#names(umsatzdaten_kiwo_wetter_feiertage)
 
 write.csv(umsatzdaten_kiwo_wetter,file.path('Daten','umsatzdaten_kiwo_wetter.csv',fsep = .Platform$file.sep))
 
-
+write.csv(umsatzdaten_kiwo_wetter,file.path('Daten','umsatzdaten_kiwo_wetter_feiertage.csv',fsep = .Platform$file.sep))
 
 ```
