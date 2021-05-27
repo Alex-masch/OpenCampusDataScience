@@ -1,13 +1,16 @@
 ---
 title: "Vorbereitung - Daten einlesen und explorieren"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
 ---
 
 
 # Daten einlesen
 Daten werden im Hintergrund hier eingelesen.
 
-```{r Daten einlesen, include=FALSE}
+```{r Daten einlesen, include=TRUE}
 #die include=FALSE Option blendet den Chunk und seine Meldungen aus. Wenn Ihr genauer sehn wollt, was da passiert: Auf TRUE setzen
 
 # Einlesen der Umsatzdaten
@@ -49,21 +52,7 @@ skim(kiwo)
 
 ```
 
-<<<<<<< HEAD
-```{r}
-#führt Umsatzdaten und Kieler Woche zusammen. Wo keine Werte für kiwo, werden N/A s erzeugt
-daten_umsatzdaten_kiwo <- left_join(umsatzdaten, kiwo)
-```
-```{r}
-#führt Kieler Woche und Wetter zusammen
-daten_kiwo_wetter <- left_join(kiwo, wetter)
-```
-```{r}
-#führt Umsatzdaten. Kieler Woche und Wetter zusammen
-daten_umsatzdaten_kiwo_wetter <- left_join(daten_umsatzdaten_kiwo, daten_kiwo_wetter)
-```
 
-=======
 
 # Daten zusammenfügen
 
@@ -78,11 +67,3 @@ write.csv(umsatzdaten_kiwo_wetter,file.path('Daten','umsatzdaten_kiwo_wetter.csv
 
 
 ```
-
-
-<<<<<<< HEAD
->>>>>>> 3ecac330827a418d93e57afece716347ebb860be
-=======
-
-
->>>>>>> 02812e85cf618b86cbabad65d313243da1e036f2

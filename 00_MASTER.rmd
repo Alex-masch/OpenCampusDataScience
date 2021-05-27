@@ -1,13 +1,6 @@
 ---
-<<<<<<< HEAD
-title: "Master"
-output:
-  word_document: default
-  html_document: default
-=======
 title: "Gruppe 4"
 output: html_document
->>>>>>> c0078917f828061de4bfa6bc21ed0cfc875d399a
 ---
 
 
@@ -40,6 +33,12 @@ Hier wird 01_Daten einlesen.rmd eingebunden
 
 ```
 
+Hier wird 04_Daten_neuevar_feiertage.Rmd eingebunden
+```{r, child='04_Daten_neuevar_feiertage.rmd'}
+
+```
+
+
 Hier wird 02_Data_cleaning.rmd eingebunden
 
 ```{r, child='02_Data_cleaning.rmd'}
@@ -56,5 +55,12 @@ Hier wird 03_Model.rmd eingebunden
 Hier wird 04_Vorhersagen.rmd eingebunden
 
 ```{r, child='04_Vorhersagen.rmd'}
+
+```
+
+
+Hier wird 05_SVM.rmd eingebunden
+
+```{r, child='05_SVM.rmd'}
 
 ```
