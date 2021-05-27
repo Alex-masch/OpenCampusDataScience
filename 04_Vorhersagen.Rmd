@@ -24,24 +24,32 @@ levels=ordentlicheWoche)
 
 Vorhersagedaten_kiwo<-left_join(Vorhersagedaten,kiwo, by="Datum")
 #names(Vorhersagedaten_kiwo)
-Vorhersagedaten_kiwo_wetter<-left_join(Vorhersagedaten_kiwo , wetter, by="Datum")
+
+Vorhersagedaten_kiwo_wetter<-left_join(Vorhersagedaten_kiwo, wetter, by="Datum")
 names(Vorhersagedaten_kiwo_wetter)
   
 #KielerWoche-Variable auf 0/1 codieren
 Vorhersagedaten_kiwo_wetter$KielerWoche[is.na(Vorhersagedaten_kiwo_wetter$KielerWoche)] <- 0
 
+Vorhersagedaten_kiwo_wetter_feiertage <- left_join(Vorhersagedaten_kiwo_wetter, feiertage_neu, by="Datum")
+
+Vorhersagedaten_kiwo_wetter_feiertage$Feiertage[is.na(Vorhersagedaten_kiwo_wetter_feiertage$Feiertage)] <- 0
+Vorhersagedaten_kiwo_wetter_feiertage$istFeiertag[is.na(Vorhersagedaten_kiwo_wetter_feiertage$istFeiertag)] <- 0
+
+pred_dataset<-Vorhersagedaten_kiwo_wetter_feiertage
+
 #Vorhersage berechnen
-Vorhersage_lm <- predict(object=model_final, newdata = Vorhersagedaten_kiwo_wetter, type = "response", interval = "confidence", na.action = na.exclude)
+Vorhersage_lm <- predict(object=model_final, newdata = pred_dataset, type = "response", interval = "confidence", na.action = na.exclude)
 
 #print(Vorhersage)
 #class(Vorhersage)#is ne doofe Matrix--> für Nutzung von dplyr-Routinen as.data.frame()
 
-Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm <- dplyr::bind_cols(Vorhersagedaten_kiwo_wetter, as.data.frame(Vorhersage_lm)) #in dieser Datei sind "fit" die Umsatz-Prädiktionen für die jeweiligen Datenpunkte, lwr und upr sind die Grenzen der Konfidenzintervalle
+pred_dataset_mit_Vorhersage_lm <- dplyr::bind_cols(pred_dataset, as.data.frame(Vorhersage_lm)) #in dieser Datei sind "fit" die Umsatz-Prädiktionen für die jeweiligen Datenpunkte, lwr und upr sind die Grenzen der Konfidenzintervalle
 
 
- Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm<- rename(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm,VorUmsatz_LM = fit,UntereGrenzeKonfInt=lwr,ObereGrenzeKonfInt=upr)
+pred_dataset_mit_Vorhersage_lm<- rename(pred_dataset_mit_Vorhersage_lm,VorUmsatz_LM = fit,UntereGrenzeKonfInt=lwr,ObereGrenzeKonfInt=upr)
 
-anzeige <-dplyr::filter(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_lm,Datum==ymd(20190607))
+anzeige <-dplyr::filter(pred_dataset_mit_Vorhersage_lm,Datum==ymd(20190607))
 anzeige <-dplyr::select(anzeige, c("Warengruppe","VorUmsatz_LM","UntereGrenzeKonfInt","ObereGrenzeKonfInt"))
 
 

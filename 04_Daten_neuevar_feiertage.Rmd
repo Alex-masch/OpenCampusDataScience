@@ -82,13 +82,22 @@ feiertage_neu<- feiertage_neu%>%
   filter(!is.na(Datum))
 feiertage_neu$istFeiertag<-1
 ```
+Anmerkung AL: Warum zwingst Du die Variablen auf "character"? Das ist ja eher ungünstig. Du kannst direkt mit dem zweiten Befehl das csv schreiben. Deswegen auskommentiert
 
-<<<<<<< HEAD
 ```{r}
 #In Datensatz schreiben als csv
-feiertage_neu <- apply(feiertage_neu, 2, as.character)
+#feiertage_neu <- apply(feiertage_neu, 2, as.character)
 write.csv(feiertage_neu, 'feiertage.csv', row.names = TRUE)
 ```
 
-=======
->>>>>>> 22d7a8742f66d8b63e6e9f3af9ccf102f0931502
+
+```{r}
+umsatzdaten_kiwo_wetter_feiertage<-left_join(umsatzdaten_kiwo_wetter , feiertage_neu, by="Datum")
+names(umsatzdaten_kiwo_wetter_feiertage)
+
+umsatzdaten_kiwo_wetter_feiertage$Feiertage[is.na(umsatzdaten_kiwo_wetter_feiertage$Feiertage)] <- 0
+umsatzdaten_kiwo_wetter_feiertage$istFeiertag[is.na(umsatzdaten_kiwo_wetter_feiertage$istFeiertag)] <- 0
+dataset<-umsatzdaten_kiwo_wetter_feiertage
+
+```
+

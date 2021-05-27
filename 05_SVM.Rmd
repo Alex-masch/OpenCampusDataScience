@@ -18,20 +18,20 @@ Trainings- und Testdatensätze erstellen
 
 ```{r}
 
-str(umsatzdaten_kiwo_wetter)
+str(dataset)
 # Zufallszähler setzen (um die zufällige Partitionierung bei jedem Durchlauf gleich zu halten)
 set.seed(1)
 
 #Datensatzzeilen shuffeln
-new_row_order<-sample(nrow(umsatzdaten_kiwo_wetter))
-umsatzdaten_kiwo_wetter<-umsatzdaten_kiwo_wetter[new_row_order,]
+new_row_order<-sample(nrow(dataset))
+dataset<-dataset[new_row_order,]
 
 # Zufällige Ziehung von Indizes für die Zeilen des Datensatzes, die dem Traininsdatensatz zugeordnet werden, Umfang: 80%
-indices_train <- sample(seq_len(nrow(umsatzdaten_kiwo_wetter)), size = floor(0.80 * nrow(umsatzdaten_kiwo_wetter)))
+indices_train <- sample(seq_len(nrow(dataset)), size = floor(0.80 * nrow(dataset)))
 
 # Definition des Trainings- und Testdatensatz durch Selektion bzw. Deselektion der entsprechenden Datenzeilen 
-train_dataset <- umsatzdaten_kiwo_wetter[indices_train, ]
-test_dataset <- umsatzdaten_kiwo_wetter[-indices_train, ]
+train_dataset <- dataset[indices_train, ]
+test_dataset <- dataset[-indices_train, ]
 
 class(train_dataset$Warengruppe)
 
@@ -48,10 +48,10 @@ test_dataset$Wochentag<-as.numeric(as.integer(test_dataset$Wochentag))
 str(test_dataset)
 
 
-Vorhersagedaten_kiwo_wetter_fuerSVM<-Vorhersagedaten_kiwo_wetter
-Vorhersagedaten_kiwo_wetter_fuerSVM$Warengruppe<-as.numeric(as.integer(Vorhersagedaten_kiwo_wetter_fuerSVM$Warengruppe))
-Vorhersagedaten_kiwo_wetter_fuerSVM$Wochentag<-as.numeric(as.integer(Vorhersagedaten_kiwo_wetter_fuerSVM$Wochentag))
-str(Vorhersagedaten_kiwo_wetter_fuerSVM)
+pred_dataset_fuerSVM<-pred_dataset
+pred_dataset_fuerSVM$Warengruppe<-as.numeric(as.integer(pred_dataset_fuerSVM$Warengruppe))
+pred_dataset_fuerSVM$Wochentag<-as.numeric(as.integer(pred_dataset_fuerSVM$Wochentag))
+str(pred_dataset_fuerSVM)
 ```
 
 SVM Trainieren (ohne Tuning)
@@ -69,29 +69,29 @@ summary(model_svm)
 Vorhersage_svm <-predict(model_svm,test_dataset,na.action = na.pass) 
 mape(test_dataset$Umsatz,Vorhersage_svm) #Mean Absolute Percent Error, 
 #rse: sum(error^2)/sum(actual-mean(actual))
-#r^2=1-rse # laut Steffen Brandt. Validieren?
+#r^2=1-rse #laut Steffen Brandt
 
 r_squared_svm<-1-rse(test_dataset$Umsatz,Vorhersage_svm)
 r_squared_svm 
 
-Vorhersage_svm <- predict(model_svm, Vorhersagedaten_kiwo_wetter_fuerSVM, na.action = na.pass)
+Vorhersage_svm <- predict(model_svm, pred_dataset_fuerSVM, na.action = na.pass)
 Vorhersage_svm
 
-Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM <- dplyr::bind_cols(Vorhersagedaten_kiwo_wetter_fuerSVM, as.data.frame(Vorhersage_svm ))
+pred_dataset_fuerSVM <- dplyr::bind_cols(pred_dataset_fuerSVM, as.data.frame(Vorhersage_svm ))
 
 
-Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM<- rename(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM,VorUmsatz_SVM = Vorhersage_svm)
+pred_dataset_fuerSVM<- rename(pred_dataset_fuerSVM,VorUmsatz_SVM = Vorhersage_svm)
 
 
-Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM$Wochentag <- factor(weekdays(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM$Datum),
+pred_dataset_fuerSVM$Wochentag <- factor(weekdays(pred_dataset_fuerSVM$Datum),
 levels=ordentlicheWoche)
 
 
-Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM$Warengruppe <- factor(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM$Warengruppe,
+pred_dataset_fuerSVM$Warengruppe <- factor(pred_dataset_fuerSVM$Warengruppe,
 levels = c(1,2,3,4,5,6),
 labels = c("Brot", "Broetchen", "Croissant","Konditorei","Kuchen","Saisonbrote"))
 
-anzeige <-dplyr::filter(Vorhersagedaten_kiwo_wetter_mit_Vorhersage_SVM,Datum==ymd(20190607))
+anzeige <-dplyr::filter(pred_dataset_fuerSVM,Datum==ymd(20190607))
 anzeige <-dplyr::select(anzeige, c("Warengruppe","VorUmsatz_SVM"))
 
 ```
