@@ -8,7 +8,7 @@
 
 library(ggplot2)
 library(dplyr)
-
+library(tidyverse) #Daten manipulieren (lädt eine Reihe andere Pakete, z.B. readr, dplyr, ggplot2) 
 #Import Data
 umsatzdaten <- umsatzdaten <- read_csv(file.path('Daten','umsatzdaten_gekuerzt.csv',fsep = .Platform$file.sep))
 kiwo <- read_csv(file.path('Daten','kiwo.csv',fsep = .Platform$file.sep))
@@ -95,14 +95,6 @@ plot_Windgeschwindigkeit <- ggplot(data = data, aes(x = Windgeschwindigkeit , y 
   xlim(3, 35) + ylim(0, 2000) + 
   ggtitle("Windgeschwindigkeit")
 
-
-
-z_scores <- as.data.frame(sapply(data, function(data) (abs(data-mean(data))/sd(data))))
-head(z_scores)
-no_outliners<-z_scores[!rowSums(z_scores>3),]
-dim(no_outliners)
-
-
 # Relevante Spalten: Umsatz, Bewölkung, Temperatur und Windgeschwindigkeit
 #Standardabweichung berechnen (sd(x))
 sd_Umsatz<-sd(data$Umsatz)
@@ -121,6 +113,7 @@ data$Temperatur[data$Temperatur > (mean(data$Temperatur) + sd_Temperatur*3)]<- (
 data$Temperatur[data$Temperatur < (mean(data$Temperatur) - sd_Temperatur*3)]<- (mean(data$Temperatur) - sd_Temperatur*3)
 data$Windgeschwindigkeit[data$Windgeschwindigkeit > (mean(data$Windgeschwindigkeit) + sd_Windgeschwindigkeit*3)]<- (mean(data$Windgeschwindigkeit) + sd_Windgeschwindigkeit*3)
 data$Windgeschwindigkeit[data$Windgeschwindigkeit < (mean(data$Windgeschwindigkeit) - sd_Windgeschwindigkeit*3)]<- (mean(data$Windgeschwindigkeit) - sd_Windgeschwindigkeit*3)
+
 #R-Squared prüfen
 M1<-Umsatz ~ as.factor(Warengruppe)
 model_M1 <- lm(M1,data,na.action=na.exclude)
@@ -151,41 +144,3 @@ M6<-update(M5,.~.+Windgeschwindigkeit)
 model_M6 <- lm(M6,data,na.action=na.exclude)
 summary(model_M6)
 #0.7128 -> 0.7562
-
-#Optional: Faktor anpassen
-data$Umsatz[data$Umsatz > (mean(data$Umsatz) + sd_Umsatz)]<- (mean(data$Umsatz) + sd_Umsatz)
-data$Umsatz[data$Umsatz < (mean(data$Umsatz) - sd_Umsatz)]<- (mean(data$Umsatz) - sd_Umsatz)
-data$Temperatur[data$Temperatur > (mean(data$Temperatur) + sd_Temperatur)]<- (mean(data$Temperatur) + sd_Temperatur)
-data$Temperatur[data$Temperatur < (mean(data$Temperatur) - sd_Temperatur)]<- (mean(data$Temperatur) - sd_Temperatur)
-data$Windgeschwindigkeit[data$Windgeschwindigkeit > (mean(data$Windgeschwindigkeit) + sd_Windgeschwindigkeit)]<- (mean(data$Windgeschwindigkeit) + sd_Windgeschwindigkeit)
-data$Windgeschwindigkeit[data$Windgeschwindigkeit < (mean(data$Windgeschwindigkeit) - sd_Windgeschwindigkeit)]<- (mean(data$Windgeschwindigkeit) - sd_Windgeschwindigkeit)
-
-M1<-Umsatz ~ as.factor(Warengruppe)
-model_M1 <- lm(M1,data,na.action=na.exclude)
-summary(model_M1)
-#0.645 -> 0.6949->0.7279
-
-M2<-update(M1,.~.+Wochentag)
-model_M2 <- lm(M2,data,na.action=na.exclude)
-summary(model_M2)
-#0.673 -> 0.7134 -> 0.7445
-
-M3<-update(M2,.~.+Temperatur)
-model_M3 <- lm(M3,data,na.action=na.exclude)
-summary(model_M3)
-#0.673 -> 0.7559 -> 0.7835
-
-M4<-update(M3,.~.+KielerWoche)
-model_M4 <- lm(M4,data,na.action=na.exclude)
-summary(model_M4)
-#0.7126 -> 0.7562 -> 0.7837
-
-M5<-update(M4,.~.+Bewoelkung)
-model_M5 <- lm(M5,data,na.action=na.exclude)
-summary(model_M5)
-#0.7128 -> 0.7562 -> 0.7837
-
-M6<-update(M5,.~.+Windgeschwindigkeit)
-model_M6 <- lm(M6,data,na.action=na.exclude)
-summary(model_M6)
-#0.7128 -> 0.7562 -> 0.7838 -> 80,34

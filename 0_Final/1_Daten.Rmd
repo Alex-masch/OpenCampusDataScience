@@ -162,6 +162,20 @@ geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz),outlier.colour="red")+ coor
 
 #Auch auf Ebene der Warengruppen bleiben hier Probleme in der Datenqualität beim Umsatz 
 #TODO Entscheidung für Umgehen mit Ausreißern in Umsatz-Daten treffen
+
+#Ausreißer deckeln auf 3x Standardabweichung (Umsatz und Windgeschwindigkeit sind betroffen.)
+#Bei 2x Standardabweichung werden 5% der Daten beeinflusst, das halte ich für zu viel. NUN 30.05.2021
+#Standardabweichung berechnen (sd(x))
+sd_Umsatz<-sd(data$Umsatz)
+sd_Bewoelkung<-sd(data$Bewoelkung)
+sd_Temperatur<-sd(data$Temperatur)
+sd_Windgeschwindigkeit<-sd(data$Windgeschwindigkeit)
+
+#Gefundene Werte auf 3x Standardabweichung setzen
+data$Windgeschwindigkeit[data$Windgeschwindigkeit > (mean(data$Windgeschwindigkeit) + sd_Windgeschwindigkeit*3)]<- (mean(data$Windgeschwindigkeit) + sd_Windgeschwindigkeit*3)
+data$Windgeschwindigkeit[data$Windgeschwindigkeit < (mean(data$Windgeschwindigkeit) - sd_Windgeschwindigkeit*3)]<- (mean(data$Windgeschwindigkeit) - sd_Windgeschwindigkeit*3)
+data$Umsatz[data$Umsatz > (mean(data$Umsatz) + sd_Umsatz*3)]<- (mean(data$Umsatz) + sd_Umsatz*3)
+data$Umsatz[data$Umsatz < (mean(data$Umsatz) - sd_Umsatz*3)]<- (mean(data$Umsatz) - sd_Umsatz*3)
 ```
 
 -   Test auf Unterschiede der Mittelwerte im Umsatz per Warengruppen, um ggf. Warengruppen zusammenzufassen: nicht zu empfehlen, alle Unterschiede sig. von 0 verschieden
