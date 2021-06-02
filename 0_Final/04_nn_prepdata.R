@@ -23,19 +23,20 @@ data <- read_csv("Daten/umsatzdaten_kiwo_wetter_feiertage.csv")
 ### Data preparation
 
 # entcoding der variablen in dummy variablen
-dummy_list <- c("Warengruppe","Wochentag")
+dummy_list <- c("Warengruppe","Wochentag","Bewoelkung")
 data_dummy = dummy_cols(data, dummy_list)
 
 #Definition der Listen fuer dummy entcodedete varivablen (damit einfacher zu handeln)
-condition_dummies = c('condition_1', 'condition_2', 'condition_3', 'condition_4', 'condition_5')
-view_dummies = c('view_0', 'view_1', 'view_2', 'view_3','view_4')
+warengruppe_dummies = c('Warengruppe_Broetchen', 'Warengruppe_Brot', 'Warengruppe_Croissant', 'Warengruppe_Konditorei', 'Warengruppe_Kuchen', 'Warengruppe_Saisonbrote')
+wochentag_dummies = c('Wochentag_Montag', 'Wochentag_Dienstag', 'Wochentag_Mittwoch', 'Wochentag_Donnerstag', 'Wochentag_Freitag', 'Wochentag_Samstag', 'Wochentag_Sonntag')
+bewoelkung_dummies = c('Bewoelkung_0', 'Bewoelkung_1', 'Bewoelkung_2', 'Bewoelkung_3', 'Bewoelkung_4', 'Bewoelkung_5', 'Bewoelkung_6', 'Bewoelkung_7','Bewoelkung_8','Bewoelkung_NA')
 
 
 ### Selection of the Feature Variables and the Label Variable
 
 #Auswahl der features (die unabhängigen Var wird zur Vorhersage der abhänigen genutzt)
 
-features <-  c("Warengruppe", "Wochentag", "KielerWoche", "Bewoelkung", "Temperatur", "Windgeschwindigkeit", condition_dummies, view_dummies)    # unabhängige Variablen zur Vorhersage
+features <-  c("KielerWoche", "Temperatur", "Windgeschwindigkeit", warengruppe_dummies, wochentag_dummies, bewoelkung_dummies)    # unabhängige Variablen zur Vorhersage
 labels <- "Umsatz"                                                                                                                                # zu vorhersgende Variable
 
 
