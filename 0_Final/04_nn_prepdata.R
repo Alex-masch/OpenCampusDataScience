@@ -36,8 +36,8 @@ data_dummy = dummy_cols(data, dummy_list)
 
 
 #Definition der Listen fuer dummy entcodedete Variablen (damit einfacher zu handeln)
-warengruppe_dummies = c('Warengruppe_1', 'Warengruppe_2', 'Warengruppe_3', 'Warengruppe_4', 'Warengruppe_5', 'Warengruppe_6')
-wochentag_dummies = c('Wochentag_1', 'Wochentag_2', 'Wochentag_3', 'Wochentag_4', 'Wochentag_5', 'Wochentag_6', 'Wochentag_7')
+warengruppe_dummies = c('Warengruppe_2', 'Warengruppe_3', 'Warengruppe_4', 'Warengruppe_5', 'Warengruppe_6')
+wochentag_dummies = c('Wochentag_2', 'Wochentag_3', 'Wochentag_4', 'Wochentag_5', 'Wochentag_6', 'Wochentag_7')
 
 
 
@@ -45,7 +45,7 @@ wochentag_dummies = c('Wochentag_1', 'Wochentag_2', 'Wochentag_3', 'Wochentag_4'
 
 #Auswahl der features (die unabhängigen Var wird zur Vorhersage der abhänigen genutzt)
 
-features <-  c("KielerWoche", "Temperatur", "Windgeschwindigkeit", warengruppe_dummies, wochentag_dummies)    # unabhängige Variablen zur Vorhersage
+features <-  c("Bewoelkung", "KielerWoche", "Temperatur", "Windgeschwindigkeit", warengruppe_dummies, wochentag_dummies)    # unabhängige Variablen zur Vorhersage
 labels <- "Umsatz"                                                                                                                                # zu vorhersgende Variable
 
 
