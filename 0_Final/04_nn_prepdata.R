@@ -2,6 +2,7 @@
 
 # clear entvironment
 remove(list = ls())
+#remove(list = ls())
 
 #Lade benöätige library über Liste und for-Schleife
 pkgs <- c('readr', 'fastDummies')
@@ -16,10 +17,17 @@ for(pkg in pkgs) {
 
 ### Data import
 
+<<<<<<< HEAD
 # Lese CSV Datei ein
 data <- read.csv(file='Daten/umsatzdaten_kiwo_wetter_feiertage.csv', encoding="utf-8")
+=======
+>>>>>>> d21c7cc8a0c9857621d83e4a1f67574ae34963e1
 
 #data[is.na(data)] <- 0 
+
+# Lese CSV Datei ein
+#data <- read_csv("Daten/umsatzdaten_kiwo_wetter_feiertage.csv")
+data <- data2
 
 ### Data preparation
 
