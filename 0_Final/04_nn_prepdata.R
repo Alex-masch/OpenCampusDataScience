@@ -16,6 +16,8 @@ for(pkg in pkgs) {
 
 ### Data import
 
+
+
 # Lese CSV Datei ein
 #data <- read_csv("Daten/umsatzdaten_kiwo_wetter_feiertage.csv")
 data <- data2
