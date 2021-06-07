@@ -149,33 +149,19 @@ plot_missing(dataset)
 
 
 ```{r Ausreißeranalyse, echo=F, message=F,error=FALSE}
-ggplot(dataset) + geom_boxplot(aes(y=Temperatur),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Temperatur), max(dataset$Temperatur)))
-ggplot(dataset) + geom_boxplot(aes(y=Bewoelkung),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Bewoelkung), max(dataset$Bewoelkung)))
-ggplot(dataset) + geom_boxplot(aes(y=Windgeschwindigkeit),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Windgeschwindigkeit), max(dataset$Windgeschwindigkeit)))
+ggplot(dataset) + geom_boxplot(aes(y=Temperatur),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Temperatur), max(dataset$Temperatur)))+ggtitle("Temperatur")
+ggplot(dataset) + geom_boxplot(aes(y=Bewoelkung),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Bewoelkung), max(dataset$Bewoelkung)))+ggtitle("Bewoelkung")
+ggplot(dataset) + geom_boxplot(aes(y=Windgeschwindigkeit),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Windgeschwindigkeit), max(dataset$Windgeschwindigkeit)))+ggtitle("Windgeschwindigkeit")
 
 # Windgeschwindigkeit hat ein paar Ausreißer, der Rest ok
-ggplot(dataset) + geom_boxplot(aes(y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Umsatz), max(dataset$Umsatz)))
+ggplot(dataset) + geom_boxplot(aes(y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Umsatz), max(dataset$Umsatz)))+ggtitle("Umsatz ")
 #Ups, das sieht nicht gut aus... Probleme
 
 ggplot(dataset) + 
-geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Umsatz), max(dataset$Umsatz)))
+geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Umsatz), max(dataset$Umsatz)))+ggtitle("Umsatz nach Warengruppen")
 
 #Auch auf Ebene der Warengruppen bleiben hier Probleme in der Datenqualität beim Umsatz 
-#TODO Entscheidung für Umgehen mit Ausreißern in Umsatz-Daten treffen
 
-#Ausreißer deckeln auf 3x Standardabweichung (Umsatz und Windgeschwindigkeit sind betroffen.)
-#Bei 2x Standardabweichung werden 5% der Daten beeinflusst, das halte ich für zu viel. NUN 30.05.2021
-#Standardabweichung berechnen (sd(x))
-sd_Umsatz<-sd(data$Umsatz)
-sd_Bewoelkung<-sd(data$Bewoelkung)
-sd_Temperatur<-sd(data$Temperatur)
-sd_Windgeschwindigkeit<-sd(data$Windgeschwindigkeit)
-
-#Gefundene Werte auf 3x Standardabweichung setzen
-data$Windgeschwindigkeit[data$Windgeschwindigkeit > (mean(data$Windgeschwindigkeit) + sd_Windgeschwindigkeit*3)]<- (mean(data$Windgeschwindigkeit) + sd_Windgeschwindigkeit*3)
-data$Windgeschwindigkeit[data$Windgeschwindigkeit < (mean(data$Windgeschwindigkeit) - sd_Windgeschwindigkeit*3)]<- (mean(data$Windgeschwindigkeit) - sd_Windgeschwindigkeit*3)
-data$Umsatz[data$Umsatz > (mean(data$Umsatz) + sd_Umsatz*3)]<- (mean(data$Umsatz) + sd_Umsatz*3)
-data$Umsatz[data$Umsatz < (mean(data$Umsatz) - sd_Umsatz*3)]<- (mean(data$Umsatz) - sd_Umsatz*3)
 ```
 
 -   Test auf Unterschiede der Mittelwerte im Umsatz per Warengruppen, um ggf. Warengruppen zusammenzufassen: nicht zu empfehlen, alle Unterschiede sig. von 0 verschieden
@@ -221,6 +207,26 @@ skim(dataset)#Datenstruktur nochmal prüfen
 plot_missing(dataset)
 ```
 
+## Datenaufbereitung: Ausreißer bereinigen
+```{r Umgang mit Ausreißern, include=T}
+#Ausreißer deckeln auf 3x Standardabweichung (Umsatz und Windgeschwindigkeit sind betroffen.)
+#Bei 2x Standardabweichung werden 5% der Daten beeinflusst, das halte ich für zu viel. NUN 30.05.2021
+#Standardabweichung berechnen (sd(x))
+sd_Umsatz<-sd(dataset$Umsatz, na.rm=TRUE)
+
+sd_Windgeschwindigkeit<-sd(dataset$Windgeschwindigkeit, na.rm=TRUE)
+
+#Gefundene Werte auf 3x Standardabweichung setzen
+dataset$Windgeschwindigkeit[dataset$Windgeschwindigkeit > (mean(dataset$Windgeschwindigkeit) + sd_Windgeschwindigkeit*3)]<- (mean(dataset$Windgeschwindigkeit) + sd_Windgeschwindigkeit*3)
+dataset$Windgeschwindigkeit[dataset$Windgeschwindigkeit < (mean(dataset$Windgeschwindigkeit) - sd_Windgeschwindigkeit*3)]<- (mean(dataset$Windgeschwindigkeit) - sd_Windgeschwindigkeit*3)
+dataset$Umsatz[dataset$Umsatz > (mean(dataset$Umsatz) + sd_Umsatz*3)]<- (mean(dataset$Umsatz) + sd_Umsatz*3)
+dataset$Umsatz[dataset$Umsatz < (mean(dataset$Umsatz) - sd_Umsatz*3)]<- (mean(dataset$Umsatz) - sd_Umsatz*3)
+
+ggplot(dataset) + geom_boxplot(aes(y=Windgeschwindigkeit),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Windgeschwindigkeit), max(dataset$Windgeschwindigkeit)))+ggtitle("Windgeschwindigkeit um Ausreißer (diff>3SD) bereinigt")
+ggplot(dataset) + geom_boxplot(aes(y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Umsatz), max(dataset$Umsatz)))+ggtitle("Umsatz um Ausreißer (diff>3SD) bereinigt")
+ggplot(dataset) + 
+geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Umsatz), max(dataset$Umsatz)))+ggtitle("Umsatz nach Warengruppen um Ausreißer (diff>3SD) bereinigt")
+```
 
 # Datensets für Modellierungen bereitstellen
 
