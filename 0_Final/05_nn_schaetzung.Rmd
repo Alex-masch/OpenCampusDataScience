@@ -43,10 +43,10 @@ import tensorflow as tf
 
 
 
-from tf.keras.layers import Dense #funktion für layer
+from tensorflow.keras.layers import Dense #funktion für layer
 from tensorflow.keras.layers import Dropout # funktion für layer
 from tensorflow.keras.optimizers import Adam    #function to optimise the "weights"
-from tensorflow.keras.layers.experimental import preprocessing   # for what?
+from tf.keras.layers.experimental import preprocessing   # for what?
 
 
 #Erstelle Normalisierungslayer
