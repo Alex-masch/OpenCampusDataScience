@@ -27,6 +27,7 @@ for(pkg in pkgs) {
 #data <- read_csv("Daten/umsatzdaten_kiwo_wetter_feiertage.csv")
 data <- data2
 pred_data<-pred_data2
+pred_data$Umsatz <-NA
 
 ### Data preparation
 
@@ -48,7 +49,7 @@ wochentag_dummies = c('Wochentag_2', 'Wochentag_3', 'Wochentag_4', 'Wochentag_5'
 #Auswahl der features (die unabhängigen Var wird zur Vorhersage der abhänigen genutzt)
 
 features <-  c("Bewoelkung", "KielerWoche", "Temperatur", "Windgeschwindigkeit", warengruppe_dummies, wochentag_dummies)    # unabhängige Variablen zur Vorhersage
-labels <- "Umsatz"                                                                                                                                # zu vorhersgende Variable
+labels <- "Umsatz"                                                                                                          # zu vorhersagende Variable
 
 
 ### Selecion of Training, Validation and Test Data
@@ -80,7 +81,8 @@ test_labels <- data_dummy[assignment == 3, labels]   # subset house_pricing to t
 
 
 pred_data_features <- pred_data_dummy   # subset house_pricing to test indices only
-#pred_data_labels <- pred_data_dummy[, labels]   # subset house_pricing to test indices only
+#pred_data_labels <-pred_data_dummy
+pred_data_labels <- pred_data_dummy[labels]   # subset house_pricing to test indices only
 
 
 
