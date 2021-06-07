@@ -16,7 +16,12 @@ for(pkg in pkgs) {
 
 ### Data import
 
+# Lese CSV Datei ein
+#data <- read.csv(file='Daten/umsatzdaten_kiwo_wetter_feiertage.csv', encoding="utf-8")
 
+
+
+#data[is.na(data)] <- 0 
 
 # Lese CSV Datei ein
 #data <- read_csv("Daten/umsatzdaten_kiwo_wetter_feiertage.csv")
@@ -28,9 +33,12 @@ data <- data2
 dummy_list <- c("Warengruppe","Wochentag")
 data_dummy = dummy_cols(data, dummy_list)
 
+
+
 #Definition der Listen fuer dummy entcodedete Variablen (damit einfacher zu handeln)
 warengruppe_dummies = c('Warengruppe_1', 'Warengruppe_2', 'Warengruppe_3', 'Warengruppe_4', 'Warengruppe_5', 'Warengruppe_6')
 wochentag_dummies = c('Wochentag_1', 'Wochentag_2', 'Wochentag_3', 'Wochentag_4', 'Wochentag_5', 'Wochentag_6', 'Wochentag_7')
+
 
 
 ### Selection of the Feature Variables and the Label Variable
@@ -50,8 +58,9 @@ str(data_dummy)
 # setze Zufallsgenerator auf festen Wert, damit random split is always the same
 set.seed(1)
 
-# Dataset durcheinander würfeln um eine Random-Reihenfolge zu erhalten
-new_row_order <- sample(nrow(data))
+
+# Dataset durcheinander würfeln um eine Random-Reihnfolge zu erhalten
+new_row_order <- sample(nrow(data_dummy))
 data_dummy <- data_dummy[new_row_order, ]
 
 # erstelle Hilfs-Zufalls-Variable assignment (Besitzt Wert 1, 2 oder 3)
@@ -66,3 +75,4 @@ validation_labels <- data_dummy[assignment == 2, labels]  # subset house_pricing
 
 test_features <- data_dummy[assignment == 3, features]   # subset house_pricing to test indices only
 test_labels <- data_dummy[assignment == 3, labels]   # subset house_pricing to test indices only
+
