@@ -226,6 +226,8 @@ ggplot(dataset) + geom_boxplot(aes(y=Windgeschwindigkeit),outlier.colour="red")+
 ggplot(dataset) + geom_boxplot(aes(y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Umsatz), max(dataset$Umsatz)))+ggtitle("Umsatz um Ausreißer (diff>3SD) bereinigt")
 ggplot(dataset) + 
 geom_boxplot(aes(x=as.factor(Warengruppe), y=Umsatz),outlier.colour="red")+ coord_cartesian(ylim = c(min(dataset$Umsatz), max(dataset$Umsatz)))+ggtitle("Umsatz nach Warengruppen um Ausreißer (diff>3SD) bereinigt")
+
+rm(sd_Umsatz, sd_Windgeschwindigkeit)
 ```
 
 # Datensets für Modellierungen bereitstellen
