@@ -41,9 +41,16 @@ use_condaenv("r-reticulate")
 import numpy as np
 import tensorflow as tf
 
+<<<<<<< HEAD
 from tf.keras.layers import Dense #funktion für layer
 from tf.keras.optimizers import Adam    #function to optimise the "weights"
 from tf.keras.layers.experimental import preprocessing   # for what?
+=======
+from tensorflow.keras.layers import Dense #funktion für layer
+from tensorflow.keras.layers import Dropout # funktion für layer
+from tensorflow.keras.optimizers import Adam    #function to optimise the "weights"
+from tensorflow.keras.layers.experimental import preprocessing   # for what?
+>>>>>>> 72c5f3e21a048d4b4233895c544eed109d5cbefd
 
 
 #Erstelle Normalisierungslayer
@@ -59,6 +66,7 @@ inputs = tf.keras.Input(shape=[len(r.training_features.keys())])
 #Layer
 x = normalizer(inputs)                # Normalisierungslayer
 x = Dense(10, activation ='relu')(x)  # 1st. hidden layer
+x = Dropout(.2)(x)                    # Dropoutlayer
 x = Dense(4, activation ='relu')(x)   # 2nd. hidden layer
 output = tf.keras.layers.Dense(1)(x)  # output layer
 
@@ -95,7 +103,7 @@ model.save('python_model.h5')  #was bedeutet das h5?
 
 #create data
 
-data <- dataw.frame(val_loss = unlist(py$history$history$val_loss),
+data <- data.frame(val_loss = unlist(py$history$history$val_loss),
                     loss = unlist(py$history$history$loss))         # checken wie genau der Dataframe aussieht
 
 #Plot Modelloptimierung (muss im Inhalt angepasst werden)
