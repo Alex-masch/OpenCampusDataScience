@@ -18,6 +18,22 @@ library(ggplot2)
 library(Metrics)
 ```
 
+
+```{r}
+### Installation von Python und TensorFlow (nur einmalig nötig)
+# Anlegen einer speziellen Python Umgebung
+conda_create("r-reticulate")
+# Installieren der Pakete in der angelegten Umgebung
+conda_install("r-reticulate", "pandas")
+conda_install("r-reticulate", "numpy")
+conda_install("r-reticulate", "tensorflow")
+conda_install("r-reticulate", "h5py")
+ 
+# Verwenden der speziellen Python Umgebung die zuvor erstellt wurde
+use_condaenv("r-reticulate")
+
+```
+
 # Definition des Neuronalen Netzes
 ```{python}
 
@@ -25,9 +41,9 @@ library(Metrics)
 import numpy as np
 import tensorflow as tf
 
-from tensorflow.keras.layers import Dense #funktion für layer
-from tensorflow.keras.optimizers import Adam    #function to optimise the "weights"
-from tensorflow.keras.layers.experimental import preprocessing   # for what?
+from tf.keras.layers import Dense #funktion für layer
+from tf.keras.optimizers import Adam    #function to optimise the "weights"
+from tf.keras.layers.experimental import preprocessing   # for what?
 
 
 #Erstelle Normalisierungslayer
