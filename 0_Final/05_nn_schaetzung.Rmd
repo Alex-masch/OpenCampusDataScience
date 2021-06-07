@@ -5,10 +5,10 @@ output: html_notebook
 
 ### Installation von Python und TensorFlow (nur einmalig nötig)
 ```{r}
-install.packages("reticulate")
+#install.packages("reticulate")
 library(reticulate)
 # Installation von miniconda (falls nicht vorhanden)
-install_miniconda(update=TRUE)
+#install_miniconda(update=TRUE)
 # Anlegen einer speziellen Python Umgebung
 conda_create("r-reticulate")
 # Installieren der Pakete in der angelegten Umgebung
@@ -106,6 +106,7 @@ model = tf.keras.models.load_model("python_model.h5")
 # Schätzung der (normierten) Preise für die Trainings- und Testdaten
 training_predictions <- py$model$predict(training_features)
 validation_predictions <- py$model$predict(validation_features)
+validation_true_predictions <- py$model$predict(pred_data_features)
 # Vergleich der Gütekriterien für die Traingings- und Testdaten
 cat(paste0("MAPE on the Training Data:\t", format(mape(training_labels[[1]], training_predictions)*100, digits=3, nsmall=2)))
 cat(paste0("\nMAPE on the Validation Data:\t", format(mape(validation_labels[[1]], validation_predictions)*100, digits=3, nsmall=2)))
@@ -116,6 +117,7 @@ cat(paste0("\nMAPE on the Validation Data:\t", format(mape(validation_labels[[1]
 # Zusammenstellung der Daten für die Plots
 data_train <- data.frame(prediction = training_predictions, actual = training_labels[[1]])
 data_test <- data.frame(prediction = validation_predictions, actual = validation_labels[[1]])
+data_pred <- data.frame(prediction = validation_true_predictions)
 # Plot der Ergebnisse der Trainingsdaten
 ggplot(data_train[1:100,]) +
   geom_line( aes(x=1:length(prediction), y=prediction, colour = "Predicted Values" )) +
@@ -132,10 +134,11 @@ ggplot(data_test[1:100,]) +
   labs(title="Predicted and Actual Values for the Test Data") +
   xlab("Case Number") +
   ylab("Sales in EUR") 
+
 ```
 
 ```{r}
 # Vorhersage für einen einzelnen Fall
-cat(paste0("Vorhergesagter Umsatz:\t", round(validation_predictions[100])))
-cat(paste0("\nTatsächlicher Umsatz:\t", validation_labels[[1]][100]))
+pred_svmtune  <- dplyr::bind_cols(pred_data2, validation_true_predictions)
+#cat(paste0("Vorhergesagter Umsatz:\t", round(validation_true_predictions[100])))
 ```
