@@ -57,6 +57,7 @@ labels <- "Umsatz"                                                              
 #gebe Datendummy aus
 
 str(data_dummy)
+str(pred_data_dummy)
 
 # setze Zufallsgenerator auf festen Wert, damit random split is always the same
 set.seed(1)
@@ -81,8 +82,13 @@ test_labels <- data_dummy[assignment == 3, labels]   # subset house_pricing to t
 
 
 pred_data_features <- pred_data_dummy   # subset house_pricing to test indices only
+pred_data_features$Wochentag_1 <-0
+pred_data_features$Wochentag_2 <-0
+pred_data_features$Wochentag_4 <-0
+pred_data_features$Wochentag_6 <-0
+pred_data_features <- as.tibble(pred_data_features[features])
 #pred_data_labels <-pred_data_dummy
-pred_data_labels <- pred_data_dummy[labels]   # subset house_pricing to test indices only
+pred_data_labels <- as.tibble(pred_data_dummy[labels])   # subset house_pricing to test indices only
 
 
 
