@@ -39,7 +39,10 @@ library(DataExplorer)
 
 ```
 
-# Hier dann noch die Neuronalen Netze etc. einfügen
+
+```{r, child='5_NN.rmd'}
+
+```
 
 ```{r, child='9_Zusammenfassung.rmd'}
 

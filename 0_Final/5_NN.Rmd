@@ -1,7 +1,10 @@
 
+# Neuronale Netze
 
-### Installation von Python und TensorFlow (nur einmalig nötig)
-```{r}
+# Vorbereitung
+
+## Installation von Python und TensorFlow (nur einmalig nötig, im Hintergrund)
+```{r, include=F}
 #install.packages("reticulate")
 library(reticulate)
 # Installation von miniconda (falls nicht vorhanden)
@@ -20,14 +23,106 @@ use_condaenv("r-reticulate")
 ```
 
 
-### Pakete aufrufen
+## Benötigte Pakete laden (im Hintergrund)
 ```{r , include=F}
 library(ggplot2)
 library(Metrics)
 ```
 
 
-### Definition des Neuronalen Netzes
+
+## Daten aufbereiten (im Hintergrund)
+```{r , include=F}
+### Preparation of the environment
+
+
+#Lade benöätige library über Liste und for-Schleife
+pkgs <- c('readr', 'fastDummies')
+
+for(pkg in pkgs) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg)
+    library(pkg, character.only = TRUE)
+  }
+}
+
+
+data <- data2 #Datensatz
+pred_data<-pred_data2 #Datensatz für spätere Vorhersage
+pred_data$Umsatz <-NA
+
+### Data preparation
+
+# encoding der Variablen in Dummy Variablen
+dummy_list <- c("Warengruppe","Wochentag")
+data_dummy = dummy_cols(data, dummy_list)
+pred_data_dummy = dummy_cols(pred_data, dummy_list)
+
+
+
+#Definition der Listen fuer dummy encodete Variablen (damit einfacher zu handeln)
+warengruppe_dummies = c('Warengruppe_2', 'Warengruppe_3', 'Warengruppe_4', 'Warengruppe_5', 'Warengruppe_6')
+wochentag_dummies = c('Wochentag_2', 'Wochentag_3', 'Wochentag_4', 'Wochentag_5', 'Wochentag_6', 'Wochentag_7')
+
+
+
+### Selection of the Feature Variables and the Label Variable
+
+#Auswahl der features (die unabhängigen Var wird zur Vorhersage der abhänigen genutzt)
+
+features <-  c("Bewoelkung", "KielerWoche", "Temperatur", "Windgeschwindigkeit", warengruppe_dummies, wochentag_dummies)    # unabhängige Variablen zur Vorhersage
+labels <- "Umsatz"                                                                                                          # zu vorhersagende Variable
+
+
+### Selecion of Training, Validation and Test Data
+
+#gebe Datendummy aus
+
+str(data_dummy)
+str(pred_data_dummy)
+
+# setze Zufallsgenerator auf festen Wert, damit random split is always the same
+set.seed(1)
+
+
+# Dataset durcheinander würfeln um eine Random-Reihnfolge zu erhalten
+new_row_order <- sample(nrow(data_dummy))
+data_dummy <- data_dummy[new_row_order, ]
+
+# erstelle Hilfs-Zufalls-Variable assignment (Besitzt Wert 1, 2 oder 3)
+assignment <- sample(1:3, size = nrow(data_dummy), prob = c(.7, .2, .1), replace = TRUE)
+
+# erstelle training-, validation- & test data fuer features und labels
+training_features <- data_dummy[assignment == 1, features]  #subset data to training indices only
+training_labels <- data_dummy[assignment == 1, labels]       #subset data to training indices only
+
+validation_features <- data_dummy[assignment == 2, features]  # subset data to validation indices only
+validation_labels <- data_dummy[assignment == 2, labels]  # subset data to validation indices only
+
+test_features <- data_dummy[assignment == 3, features]   # subset data to test indices only
+test_labels <- data_dummy[assignment == 3, labels]   # subset data to test indices only
+
+
+pred_data_features <- pred_data_dummy   # Vorbereitung Datensatz für "echte" Vorhersage
+pred_data_features$Wochentag_1 <-0
+pred_data_features$Wochentag_2 <-0
+pred_data_features$Wochentag_4 <-0
+pred_data_features$Wochentag_6 <-0
+
+pred_data_features <- as_tibble(pred_data_features[features])
+pred_data_labels <- as_tibble(pred_data_dummy[labels])   
+
+
+
+
+```
+
+
+
+# Training des Neuronalen Netzes
+
+## Definition des Neuronalen Netzes
+
 ```{python}
 # Import needed Python libraries and functions
 import numpy as np
@@ -57,7 +152,7 @@ model.summary()
 ```
 
 
-### Schätzung des neuronalen Netzes
+## Schätzung des neuronalen Netzes
 ```{python}
 # Definition der Kosten-(Loss-)Funktion und der Optimierungsfunktion mit seinen Hyperparametern
 model.compile(loss="mse", optimizer=Adam(lr=0.001))
@@ -69,7 +164,7 @@ model.save("python_model.h5")
 ```
 
 
-### Auswertung der Modelloptimierung
+## Auswertung der Modelloptimierung
 ```{r}
 # Grafische Ausgabe der Modelloptimierung
 # create data
@@ -86,13 +181,13 @@ ggplot(data[-1,]) +
 ```
 
 
-### (Ggf.) Laden eines gespeicherten Neuronalen Netzes ###
+## (Ggf.) Laden eines gespeicherten Neuronalen Netzes ###
 ```{python}
 model = tf.keras.models.load_model("python_model.h5")
 ```
 
 
-### Auswertung der Schätzergebnisse ###
+## Auswertung der Schätzergebnisse ###
 ```{r}
 # Schätzung der (normierten) Preise für die Trainings- und Testdaten
 training_predictions <- py$model$predict(training_features)
