@@ -26,12 +26,14 @@ for(pkg in pkgs) {
 # Lese CSV Datei ein
 #data <- read_csv("Daten/umsatzdaten_kiwo_wetter_feiertage.csv")
 data <- data2
+pred_data<-pred_data2
 
 ### Data preparation
 
 # entcoding der variablen in dummy variablen
 dummy_list <- c("Warengruppe","Wochentag")
 data_dummy = dummy_cols(data, dummy_list)
+pred_data_dummy = dummy_cols(pred_data, dummy_list)
 
 
 
@@ -75,4 +77,10 @@ validation_labels <- data_dummy[assignment == 2, labels]  # subset house_pricing
 
 test_features <- data_dummy[assignment == 3, features]   # subset house_pricing to test indices only
 test_labels <- data_dummy[assignment == 3, labels]   # subset house_pricing to test indices only
+
+
+pred_data_features <- pred_data_dummy   # subset house_pricing to test indices only
+#pred_data_labels <- pred_data_dummy[, labels]   # subset house_pricing to test indices only
+
+
 
