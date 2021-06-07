@@ -7,7 +7,7 @@ output: html_notebook
 # Einbindung Script Datenaufbereitung
 ```{r}
 
-source("04_nn_prepdata.R")
+#source("04_nn_prepdata.R")
 
 ```
 
@@ -41,16 +41,12 @@ use_condaenv("r-reticulate")
 import numpy as np
 import tensorflow as tf
 
-<<<<<<< HEAD
+
+
 from tf.keras.layers import Dense #funktion für layer
-from tf.keras.optimizers import Adam    #function to optimise the "weights"
-from tf.keras.layers.experimental import preprocessing   # for what?
-=======
-from tensorflow.keras.layers import Dense #funktion für layer
 from tensorflow.keras.layers import Dropout # funktion für layer
 from tensorflow.keras.optimizers import Adam    #function to optimise the "weights"
 from tensorflow.keras.layers.experimental import preprocessing   # for what?
->>>>>>> 72c5f3e21a048d4b4233895c544eed109d5cbefd
 
 
 #Erstelle Normalisierungslayer
