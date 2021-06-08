@@ -337,3 +337,40 @@ ggplot(data1_sum) +
 
 
 ```
+
+```{r Umsaetze je Warengruppe mit Konf-Intervalle}
+# Calculates mean, sd, se and IC für Umsatzdaten pro Wochentag
+data1_sum2 <- data1 %>%
+  group_by(Warengruppe) %>%
+  summarise( 
+    n=n(),
+    mean=mean(Umsatz),
+    sd=sd(Umsatz)
+  ) %>%
+  mutate( se=sd/sqrt(n))  %>%
+  mutate( ic=se * qt((1-0.05)/2 + .5, n-1))
+
+
+
+
+
+ggplot(data1_sum2) +
+  geom_bar( aes(x=Warengruppe, y=mean), stat="identity") +
+  geom_errorbar( aes(x=Warengruppe, ymin=mean-ic, ymax=mean+ic), width=0.4, colour="orange", alpha=0.9, size=1.5) + scale_x_discrete(limits = Warengruppen) +
+  ggtitle("Balkendiagramm Umsatz mit Fehlerbalken (Konfidenzintervall) ")
+
+
+
+
+
+```
+
+
+```{r Umsaetze je WarengruppexWochentag mit Konf-Intervalle}
+
+ggplot(data1, aes(fill=Wochentag, y=Umsatz, x=Wochentag)) + 
+  geom_bar(position="dodge", stat="identity")+facet_wrap(~Warengruppe)
+
+
+
+```

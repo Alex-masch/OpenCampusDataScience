@@ -5,7 +5,9 @@ output:
   pdf_document: default
 ---
 
-# Gruppenzusammensetzung: Alexander, Anke, Jasper, Nicholas
+### Gruppenzusammensetzung: Alexander, Anke, Jasper, Nicholas
+
+# Vorbereitung Umgebung (im Hintergrund)
 
 ```{r Setup, include=FALSE}
 knitr::opts_chunk$set(echo = T) #Der Code in den Chunks soll im Output stehen

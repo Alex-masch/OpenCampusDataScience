@@ -19,5 +19,14 @@ ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_LM, y=Prediction_Umsa
 ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_SVM, y=Prediction_Umsatz_SVMtune, color=Warengruppe))
 ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_LM, y=Prediction_Umsatz_nn, color=Warengruppe))
 ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_SVMtune, y=Prediction_Umsatz_nn, color=Warengruppe))
+
+
+all_predictions_long <-  select(all_predictions,-c("KielerWoche", "Bewoelkung", "Temperatur", "Wochentag","Windgeschwindigkeit", "istFeiertag"))%>% gather(Prediction_Herkunft, prediction_value, -c("Warengruppe", "Datum"))
+
+ggplot(all_predictions_long, aes(fill=as.factor(Datum),y=prediction_value, x=Prediction_Herkunft)) + geom_bar(position="dodge", stat="identity")+facet_wrap(~Warengruppe) + theme(axis.text.x = element_text(angle=45)) + scale_x_discrete(labels=c("LM"," NN", "SVM", "SVMtune"))
+
+filter(all_predictions_long, Datum==ymd(20190607))%>%
+ggplot( aes(y=prediction_value, x=Prediction_Herkunft)) + geom_bar(position="dodge", stat="identity")+facet_wrap(~Warengruppe) + theme(axis.text.x = element_text(angle=45)) + scale_x_discrete(labels=c("LM"," NN", "SVM", "SVMtune"))+ ggtitle("Vorhersagevergleich nach Warengruppe für den Tag 07.06.2019")
+
 ```
 

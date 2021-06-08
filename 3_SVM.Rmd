@@ -35,7 +35,7 @@ test_data <- data[-indices_train, ]
 ## SVM Trainieren (ohne Tuning)
 
 ```{r}
-model_svm <- svm(Umsatz ~ Warengruppe+Wochentag, train_data)
+model_svm <- svm(Umsatz ~ Warengruppe + Wochentag , train_data)
 summary(model_svm)
 ```
 
@@ -49,6 +49,7 @@ mape(test_data$Umsatz,test_data_svm) #Mean Absolute Percent Error,
 
 r_squared_svm<-1-rse(test_data$Umsatz,test_data_svm)
 r_squared_svm 
+
 ```
 
 ##Prädiktion 2 (SVM ohne Tuning)
