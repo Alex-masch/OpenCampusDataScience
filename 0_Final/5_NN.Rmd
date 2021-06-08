@@ -252,6 +252,15 @@ pred_nn
 
 [**Die Vorhersage für den ersten Tag (`r ymd(20190607)`) nach Ende der Datenreihe ist:**]{style="color: red;"}
 
+Variablen die im NN eingehen: 
+Bewoelkung
+KielerWoche
+Temperatur
+Windgeschwindigkeit
+warengruppe_dummies
+wochentag_dummies
+
+
 
 ```{r echo=FALSE}
 anzeige

@@ -87,6 +87,9 @@ pred_lm
 
 [**Die Vorhersage für den ersten Tag (`r ymd(20190607)`) nach Ende der Datenreihe ist:**]{style="color: red;"}
 
+Modell: Umsatz ~ Warengruppe + Wochentag + istFeiertag + Temperatur + 
+    KielerWoche + Windgeschwindigkeit
+
 ```{r echo=FALSE}
 anzeige
 
