@@ -13,10 +13,10 @@ all_predictions <- full_join(all_predictions, select(pred_nn,c("Datum", "Warengr
 
 all_predictions
 
-ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_LM, y=Prediction_Umsatz_SVM))
-ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_LM, y=Prediction_Umsatz_SVMtune))
-ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_SVM, y=Prediction_Umsatz_SVMtune))
-ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_LM, y=Prediction_Umsatz_nn))
-ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_SVMtune, y=Prediction_Umsatz_nn))
+ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_LM, y=Prediction_Umsatz_SVM, color=Warengruppe))
+ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_LM, y=Prediction_Umsatz_SVMtune, color=Warengruppe))
+ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_SVM, y=Prediction_Umsatz_SVMtune, color=Warengruppe))
+ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_LM, y=Prediction_Umsatz_nn, color=Warengruppe))
+ggplot(all_predictions)+geom_point(aes(x=Prediction_Umsatz_SVMtune, y=Prediction_Umsatz_nn, color=Warengruppe))
 ```
 
